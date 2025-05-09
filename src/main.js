@@ -115,12 +115,29 @@ function draw(){
       ctx.fillRect(c*cell,r*cell,cell,cell);
     }
   }
-  ctx.strokeStyle='#444';
-  for(let i=0;i<=N;i++){
-    const p=i*cell;
-    ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(canvas.width,p);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,canvas.height);ctx.stroke();
-  }
+  ctx.strokeStyle = '#444';
+const midIndex  = Math.floor(N / 2);   // center row/col index
+
+for (let i = 0; i <= N; i++) {
+  const p = i * cell;
+
+  // horizontal line
+  ctx.lineWidth = (i === midIndex) ? 2 : 1;   // thicker on middle row
+  ctx.beginPath();
+  ctx.moveTo(0, p);
+  ctx.lineTo(canvas.width, p);
+  ctx.stroke();
+
+  // vertical line
+  ctx.lineWidth = (i === midIndex) ? 2 : 1;   // thicker on middle column
+  ctx.beginPath();
+  ctx.moveTo(p, 0);
+  ctx.lineTo(p, canvas.height);
+  ctx.stroke();
+}
+
+ctx.lineWidth = 1;   // reset for any later drawing
+
 }
 
 let lastTS=0;
