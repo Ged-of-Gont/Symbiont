@@ -4,8 +4,8 @@
   --color-fg: #f6d7d9;
   --color-line: #f244ef;
   --color-accent: #edebd4;
-  --species2: #e6ff29;
-  --species1: #6a56e9;
+  --species2: #f03cb1;
+  --species1: #70c559;
   --app-max-width: clamp(350px, 80vw, 1000px);
   --ui-font:'Share Tech Mono',monospace;
 }
