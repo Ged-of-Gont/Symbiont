@@ -1,0 +1,167 @@
+:root {
+  --color-bg: #000000;
+  --input-color: #1c140f;
+  --color-fg: #f6d7d9;
+  --color-line: #f244ef;
+  --color-accent: #edebd4;
+  --species2: #08ffe2;
+  --species1: #f31d1d;
+  --ui-font:'Share Tech Mono',monospace;
+}
+
+html,body{
+  font-family: var(--ui-font);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  padding: 20px;
+}
+
+/* 1) Reset + box‑sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+select {
+  appearance: none;
+  /* Remove default arrow styling */
+  background-color: var(--color-line);
+  color: var(--input-color);
+  padding: 0.5rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  border-radius: 0;
+  /* Make it square */
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="number"] {
+  background-color: var(--color-line);
+  /* or var(--input-color) if you prefer */
+  color: var(--input-color);
+  /* or var(--color-bg) for darker text */
+  border: none;
+  padding: 0.4rem;
+  font-size: 1rem;
+}
+
+button,
+input,
+select,
+textarea { 
+  font: inherit;
+  font-weight:500; 
+} 
+
+.control-panel {
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  /* allow shrinking on small screens */
+  padding: 1rem;
+  background: var(--color-bg);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  overflow-x: hidden;
+  /* prevent horizontal scrollbar */
+}
+
+.control-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  width: 100%;
+}
+
+
+.control-row>* {
+  flex: 0 0 auto;
+  align-self: stretch;
+  /* ✅ Let child stretch to full row height */
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--color-line);
+}
+
+.control-unit {
+  flex: 0 0 auto;
+  max-width: 350px;
+  display: flex;
+  font-size: 1rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: var(--input-color);
+  border: solid 7px var(--input-color);
+  padding: 0.35rem;
+  text-transform: uppercase;
+  color: var(--color-line);
+}
+
+.control-unit input {
+  padding: 0.4rem;
+  font-size: 1rem;
+}
+
+.color-square {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  margin-right: 0.5em;
+}
+
+.species1 {
+  background-color: var(--species1);
+}
+
+.species2 {
+  background-color: var(--species2);
+}
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--input-color);
+  color: var(--color-bg);
+  padding: 10px 12px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  max-width: 150px;
+  border-top: 3px solid var(--color-fg);
+  border-left: 3px solid var(--color-fg);
+  border-bottom: 3px solid var(--color-line);
+  border-right: 3px solid var(--color-line);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button:hover {
+  background: var(--color-line);
+  color: var(--input-color);
+}
+
+canvas {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  display: block;
+  margin: 4rem auto;
+  border: 2px solid #4b094a;
+  min-width: 350px;
+}

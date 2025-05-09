@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Control Panel Demo</title>
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="control-panel">
+    <div class="control-row">
+      <div style="color: var(--species1);"><h3>SPECIES 1:</h3></div>
+     
+      <div class="control-unit">
+        <label for="b1"># of <span class="color-square species1"></span>Neighbors<br> to Spawn</label>
+        <input id="b1" type="text" value="3">
+      </div>
+
+      <div class="control-unit">
+        <label for="s1"># of <span class="color-square species1"></span>Neighbors<br> to Survive</label>
+        <input id="s1" type="text" value="2,3">
+      </div>
+
+      <div class="control-unit">
+        <label for="y1">Min # of &nbsp;<span class="color-square species2"></span>Neighbors <br> to Spawn or Surive</label>
+        <input id="y1" type="number" min="0" max="8" value="0" title="Minimum opposite species neighbors to spawn or survive">
+      </div>
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="control-row">
+      <div style="color: var(--species2);"><h3>SPECIES 2:</h3></div>
+      
+      <div class="control-unit">
+        <label for="b2"># of <span class="color-square species2"></span>Neighbors<br> to Spawn</label>
+        <input id="b2" type="text" value="3">
+      </div>
+
+      <div class="control-unit">
+        <label for="s2"># of <span class="color-square species2"></span>Neighbors<br> to Survive</label>
+        <input id="s2" type="text" value="2,3">
+      </div>
+
+      <div class="control-unit">
+        <label for="y2">Min # of &nbsp;<span class="color-square species1"></span>Neighbors <br> to Spawn or Surive</label>
+        <input id="y2" type="number" min="0" max="8" value="0" title="Minimum opposite species neighbors to spawn or survive">
+      </div>
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="control-row">
+      <button id="make">Restart World</button>
+      <div class="control-unit">
+        <label>Grid&nbsp;Size</label>
+        <input id="size" type="number" min="5" value="24">
+      </div>
+      <div class="control-unit">
+        <label>If there's a tie:</label>
+        <select id="tie">
+          <option value="none">leave empty</option>
+          <option value="s1">green wins</option>
+          <option value="s2">red wins</option>
+          <option value="rand">random</option>
+        </select>
+      </div>
+      <button id="wrap">Wrap: Off</button>
+      <button id="fade">Fade: On</button>
+      <div class="control-unit">
+        <div style="display: flex; justify-content: space-between;">
+          <label for="speed">Speed:</label>
+          <span id="spdVal">120 ms</span>
+        </div>
+        <input id="speed" type="range" min="20" max="1000" step="20" value="120">
+      </div>
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="control-row">
+      <button id="clear">Clear</button>
+      <button id="rand1">Sprinkle<span class="color-square species1"></span></button>
+      <button id="rand2">Sprinkle<span class="color-square species2"></span></button>
+      <button id="randBoth">
+        Sprinkle&nbsp;<span style="white-space: nowrap;">
+          <span class="color-square species1"></span>&&nbsp; 
+          <span class="color-square species2"></span>
+        </span>
+      </button>
+      <button id="run">Start</button>
+      <button id="step">Forward One Step</button>
+    </div>
+
+  </div>
+
+  <canvas id="c" width="800" height="800"></canvas>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
