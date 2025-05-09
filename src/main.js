@@ -15,6 +15,8 @@ let N=+sizeInp.value, cell=10;
 let grid=[], next=[], fade=[];
 let timer=null, interval=+spdInp.value;
 let wrapEdges=false, fadeMode=true;
+let Y1b, Y1s, Y2b, Y2s;   // spawn / survive thresholds for each species
+
 
 let B1,S1,B2,S2, Y1,Y2, tieMode;
 
@@ -49,31 +51,47 @@ function neigh(r,c,type){
   return n;
 }
 
-/* ---------- One generation ---------- */
-function stepGeneration(){
-  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
-    const state=grid[r][c];
-    const n1=neigh(r,c,1), n2=neigh(r,c,2);
+/* ---------- ONE GENERATION ----------
+   Uses separate thresholds:
+     Y1b / Y2b  →  # opposite neighbours required to **spawn**
+     Y1s / Y2s  →  # opposite neighbours required to **survive**
+--------------------------------------------------------------*/
+function stepGeneration() {
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const state = grid[r][c];
 
-    if(state===1){ // green alive
-      next[r][c]=(S1.has(n1) && n2>=Y1)?1:0;
-    }else if(state===2){ // red alive
-      next[r][c]=(S2.has(n2) && n1>=Y2)?2:0;
-    }else{ // empty square
-      const greenOK = B1.has(n1) && n2>=Y1;
-      const redOK   = B2.has(n2) && n1>=Y2;
+      // classic radius‑1 neighbour counts
+      const n1 = neigh(r, c, 1, 1);   // green neighbours
+      const n2 = neigh(r, c, 2, 1);   // red   neighbours
 
-      if(greenOK && !redOK) next[r][c]=1;
-      else if(redOK && !greenOK) next[r][c]=2;
-      else if(greenOK && redOK){
-        if(tieMode==='s1') next[r][c]=1;
-        else if(tieMode==='s2') next[r][c]=2;
-        else if(tieMode==='rand') next[r][c]=Math.random()<.5?1:2;
-        else next[r][c]=0;              // 'none'
-      }else next[r][c]=0;
+      /* ----- SURVIVAL ----- */
+      if (state === 1) {                         // GREEN alive
+        next[r][c] = (S1.has(n1) && n2 >= Y1s) ? 1 : 0;
+        continue;
+      }
+      if (state === 2) {                         // RED   alive
+        next[r][c] = (S2.has(n2) && n1 >= Y2s) ? 2 : 0;
+        continue;
+      }
+
+      /* ----- BIRTH (currently empty) ----- */
+      const greenOK = B1.has(n1) && n2 >= Y1b;
+      const redOK   = B2.has(n2) && n1 >= Y2b;
+
+      if (greenOK && !redOK)       next[r][c] = 1;
+      else if (redOK && !greenOK)  next[r][c] = 2;
+      else if (greenOK && redOK) {             // tie
+        if      (tieMode === 's1')   next[r][c] = 1;
+        else if (tieMode === 's2')   next[r][c] = 2;
+        else if (tieMode === 'rand') next[r][c] = (Math.random() < 0.5 ? 1 : 2);
+        else                         next[r][c] = 0;   // 'none'
+      } else {
+        next[r][c] = 0;
+      }
     }
   }
-  [grid,next]=[next,grid];
+  [grid, next] = [next, grid];   // swap buffers
 }
 
 /* ---------- Rendering & animation ---------- */
@@ -195,11 +213,15 @@ runBtn.onclick=()=>{
   else { timer=setInterval(stepGeneration,interval); runBtn.textContent='Stop'; }
 };
 
-function readRules(){
-  B1=parseRule(b1Inp.value); S1=parseRule(s1Inp.value);
-  B2=parseRule(b2Inp.value); S2=parseRule(s2Inp.value);
-  Y1=+y1Inp.value; Y2=+y2Inp.value;
-  tieMode=tieSel.value;
+const y1bInp = $('y1b'), y1sInp = $('y1s');
+const y2bInp = $('y2b'), y2sInp = $('y2s');
+
+function readRules() {
+  B1 = parseRule(b1Inp.value);  S1 = parseRule(s1Inp.value);
+  B2 = parseRule(b2Inp.value);  S2 = parseRule(s2Inp.value);
+  Y1b = +y1bInp.value; Y1s = +y1sInp.value;
+  Y2b = +y2bInp.value; Y2s = +y2sInp.value;
+  tieMode = tieSel.value;
 }
 
 makeBtn.onclick=()=>{
@@ -232,6 +254,7 @@ function hexToRgba(hex, alpha) {
 
 
 /* ---------- Init ---------- */
+readRules();  
 makeBtn.onclick();
 spdInp.oninput();
 requestAnimationFrame(animate);
