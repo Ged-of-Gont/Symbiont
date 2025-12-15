@@ -9,10 +9,10 @@
 </head>
 
 <body>
-<h1>SYMBIONT V0.1</h1>
+<h1>SYMBIONT V0.2</h1>
   <div class="control-panel">
     <div class="control-row">
-      <div style="color: var(--species1);"><h3>SPECIES<br> 1:</h3></div>
+      <div style="color: var(--species1);"><h3 id="labelS1">SPECIES<br> 1:</h3></div>
      
       <div class="control-unit">
         <label for="b1">#&nbsp;<span class="color-square species1"></span>to spawn</label>
@@ -26,18 +26,18 @@
 
       <div class="control-unit">
         <label for="y1b">#&nbsp;<span class="color-square species2"></span>to spawn</label>
-        <input id="y1b" type="number" min="0" max="8" value="0" title="Minimum opposite species neighbors to spawn or survive">
+        <input id="y1b" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
       <div class="control-unit">
         <label for="y1s">#&nbsp;<span class="color-square species2"></span>to survive</label>
-        <input id="y1s" type="number" min="0" max="8" value="0" title="Minimum opposite species neighbors to spawn or survive">
+        <input id="y1s" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
     </div>
   </div>
 
   <div class="control-panel">
     <div class="control-row">
-      <div style="color: var(--species2);"><h3>SPECIES<br> 2:</h3></div>
+      <div style="color: var(--species2);"><h3 id="labelS2">SPECIES<br> 2:</h3></div>
       
       <div class="control-unit">
         <label for="b2">#&nbsp;<span class="color-square species2"></span>to spawn</label>
@@ -51,11 +51,11 @@
 
       <div class="control-unit">
         <label for="y2b">#&nbsp;<span class="color-square species1"></span>to spawn</label>
-        <input id="y2b" type="number" min="0" max="8" value="0" title="Minimum opposite species neighbors to spawn or survive">
+        <input id="y2b" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
       <div class="control-unit">
         <label for="y2s">#&nbsp;<span class="color-square species1"></span>to survive</label>
-        <input id="y2s" type="number" min="0" max="8" value="0" title="Minimum opposite species neighbors to spawn or survive">
+        <input id="y2s" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
     </div>
   </div>
@@ -71,7 +71,7 @@
         <select id="tie">
           <option value="none">leave empty</option>
           <option value="s1">green wins</option>
-          <option value="s2">red wins</option>
+          <option value="s2">pink wins</option>
           <option value="rand">random</option>
         </select>
       </div>
@@ -104,6 +104,32 @@
       
     </div>
 
+  </div>
+
+  <div class="control-panel">
+    <div class="control-row" style="align-items: flex-start; gap: 12px; flex-wrap: wrap;">
+      <div>
+        <label for="genomeFile">Load genomes (graveyard/history JSON)</label><br>
+        <input id="genomeFile" type="file" accept=".json,application/json">
+        <div id="genomeStatus" style="font-size: 0.9em; color: #777;">No genomes loaded</div>
+      </div>
+      <div>
+        <label for="genomeList">Genome IDs</label><br>
+        <select id="genomeList" size="6" style="min-width: 140px;"></select>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <button id="assignG1">Set as Species 1</button>
+        <button id="assignG2">Set as Species 2</button>
+        <button id="clearGenomes">Clear genomes</button>
+        <div style="font-size: 0.9em; color: #555;">
+          Active: S1=<span id="activeG1">n/a</span> | S2=<span id="activeG2">n/a</span>
+        </div>
+        <div style="font-size: 0.85em; color: #888;">
+          <div>S1 rules: <span id="activeG1Rules">n/a</span></div>
+          <div>S2 rules: <span id="activeG2Rules">n/a</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <canvas id="c" width="800" height="800"></canvas>
