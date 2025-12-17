@@ -139,12 +139,10 @@ const assignG1Btn  = $('assignG1');
 const assignG2Btn  = $('assignG2');
 const clearGBtn    = $('clearGenomes');
 const genomeStatus = $('genomeStatus');
-const activeG1     = $('activeG1');
-const activeG2     = $('activeG2');
-const activeG1Rules = $('activeG1Rules');
-const activeG2Rules = $('activeG2Rules');
+const browseBtn    = $('browseBtn');
 
 let loadedGenomes = [];
+let lastFileName = null;
 const b1Input = $('b1');
 const s1Input = $('s1');
 const b2Input = $('b2');
@@ -153,6 +151,29 @@ const y1bInput = $('y1b');
 const y1sInput = $('y1s');
 const y2bInput = $('y2b');
 const y2sInput = $('y2s');
+
+function clearSpeciesGenome(species) {
+  if (species === 1) {
+    S.genome1 = null;
+    S.rules1Birth = null;
+    S.rules1Surv = null;
+    labelS1.innerHTML = 'SPECIES<br> 1: custom';
+  } else {
+    S.genome2 = null;
+    S.rules2Birth = null;
+    S.rules2Surv = null;
+    labelS2.innerHTML = 'SPECIES<br> 2: custom';
+  }
+  // push current text-field rules into state so the sim follows UI edits
+  readRules();
+}
+
+[b1Input, s1Input, y1bInput, y1sInput].forEach(inp => {
+  inp?.addEventListener('input', () => clearSpeciesGenome(1));
+});
+[b2Input, s2Input, y2bInput, y2sInput].forEach(inp => {
+  inp?.addEventListener('input', () => clearSpeciesGenome(2));
+});
 
 rand1Btn.onclick = () => {
   S.grid.forEach((row, r) => {
@@ -231,7 +252,15 @@ makeBtn.onclick = () => {
     timer = null;
     runBtn.textContent = 'Start';
   }
-  readRules();
+  // If genomes are loaded, keep them; otherwise pull manual rules from UI.
+  const genomesLoaded = S.rules1Birth && S.rules1Surv && S.rules2Birth && S.rules2Surv;
+  if (!genomesLoaded) {
+    readRules();
+  } else {
+    // Still sync tieMode from the dropdown for genome mode.
+    const tieSelect = document.getElementById('tie');
+    if (tieSelect) S.tieMode = tieSelect.value;
+  }
   S.N = Math.max(5, +$('size').value || 50);
   canvas.height = canvas.width;
   alloc(canvas);
@@ -247,14 +276,18 @@ function renderGenomeList() {
     opt.textContent = `${g.id ?? idx} | b:${g.birth} s:${g.survival}`;
     genomeList.appendChild(opt);
   });
-  genomeStatus.textContent = loadedGenomes.length
-    ? `Loaded ${loadedGenomes.length} genomes`
-    : 'No genomes loaded';
+  if (loadedGenomes.length) {
+    const name = lastFileName ? `${lastFileName}` : 'unsaved';
+    genomeStatus.textContent = `Loaded: ${name} (${loadedGenomes.length} genomes)`;
+  } else {
+    genomeStatus.textContent = 'No genomes loaded';
+  }
 }
 
 genomeFile?.addEventListener('change', e => {
   const file = e.target.files?.[0];
   if (!file) return;
+  lastFileName = file.name;
   const reader = new FileReader();
   reader.onload = evt => {
     try {
@@ -267,6 +300,7 @@ genomeFile?.addEventListener('change', e => {
           birth: String(g.birth).trim(),
           survival: String(g.survival).trim()
         }));
+      lastFileName = file.name;
       renderGenomeList();
     } catch (err) {
       genomeStatus.textContent = `Load error: ${err.message}`;
@@ -274,6 +308,8 @@ genomeFile?.addEventListener('change', e => {
   };
   reader.readAsText(file);
 });
+
+browseBtn?.addEventListener('click', () => genomeFile?.click());
 
 function pairsFromBits(bits) {
   if (typeof bits !== 'string' || bits.length !== 16) return [];
@@ -301,10 +337,9 @@ function assignGenome(species) {
   const g = loadedGenomes[idx];
   try {
     setGenomeForSpecies(species, g);
-    if (species === 1) activeG1.textContent = g.id ?? 'n/a';
-    else activeG2.textContent = g.id ?? 'n/a';
-    if (species === 1) labelS1.innerHTML = `SPECIES<br> 1: ${g.id ?? 'n/a'}`;
-    else labelS2.innerHTML = `SPECIES<br> 2: ${g.id ?? 'n/a'}`;
+    const idLabel = g.id ?? 'n/a';
+    if (species === 1) labelS1.innerHTML = `SPECIES<br> 1: ${idLabel}`;
+    else labelS2.innerHTML = `SPECIES<br> 2: ${idLabel}`;
     // populate inputs for this species only: self+any in own boxes, other+any in the opposite-color boxes of the same row
     const countSelfAny = bits => {
       if (typeof bits !== 'string' || bits.length !== 16) return [];
@@ -365,9 +400,6 @@ function assignGenome(species) {
       const fmt = arr => arr.length ? arr.join(',') : '-';
       return `self: ${fmt(selfOnly)} | other: ${fmt(otherOnly)} | any: ${fmt(any)}`;
     };
-    const summary = `B ${summarize(codesB)}; S ${summarize(codesS)}`;
-    if (species === 1) activeG1Rules.textContent = summary;
-    else activeG2Rules.textContent = summary;
     draw(); // refresh immediately
   } catch (err) {
     genomeStatus.textContent = `Assign error: ${err.message}`;
@@ -378,15 +410,22 @@ assignG1Btn?.addEventListener('click', () => assignGenome(1));
 assignG2Btn?.addEventListener('click', () => assignGenome(2));
 clearGBtn?.addEventListener('click', () => {
   clearGenomes();
-  activeG1.textContent = 'n/a';
-  activeG2.textContent = 'n/a';
+  lastFileName = null;
   labelS1.innerHTML = 'SPECIES<br> 1:';
   labelS2.innerHTML = 'SPECIES<br> 2:';
-  activeG1Rules.textContent = 'n/a';
-  activeG2Rules.textContent = 'n/a';
+  // clear fields visually
+  [b1Input, s1Input, y1bInput, y1sInput].forEach(inp => { inp.value = ''; inp.setAttribute('value',''); });
+  [b2Input, s2Input, y2bInput, y2sInput].forEach(inp => { inp.value = ''; inp.setAttribute('value',''); });
+  genomeStatus.textContent = 'No genomes loaded';
 });
 
 /* ---------- initial boot ---------- */
+// apply size input to state before alloc
+const sizeInput = document.getElementById('size');
+if (sizeInput) {
+  const n = Math.max(5, +sizeInput.value || S.N);
+  S.N = n;
+}
 alloc(canvas);
 readRules();
 draw();

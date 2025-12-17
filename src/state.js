@@ -1,7 +1,7 @@
 // src/state.js
 export const state = {
     /* world geometry */
-    N: 50,
+    N: 36,
     cell: 10,
   
     /* 2‑D arrays (filled by alloc) */
@@ -10,9 +10,9 @@ export const state = {
     fade: [[]],
   
     /* toggles & timing */
-    wrapEdges: false,
-    fadeMode:  true,
-    interval:  120,        // ms per generation
+  wrapEdges: true,
+  fadeMode:  false,
+  interval:  120,        // ms per generation
   
   /* rule parameters */
   B1: new Set([3]),

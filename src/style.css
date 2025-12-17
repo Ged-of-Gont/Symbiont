@@ -1,18 +1,22 @@
 :root {
-  --color-bg: #130808;
+  --color-bg: #180212;
   --input-color: #412e22;
   --color-fg: #f6d7d9;
   --color-line: #f244ef;
   --color-accent: #edebd4;
   --species2: #f03cb1;
-  --species1: #70c559;
+  --species1: #37e651;
   --app-max-width: clamp(350px, 80vw, 1000px);
   --ui-font:'Share Tech Mono',monospace;
+  --tight-gap: 1rem;
 }
 
 html,body{
   font-family: var(--ui-font);
   font-style: bold;
+}
+h1, h3 {
+  margin: 0;
 }
 
 body {
@@ -60,7 +64,8 @@ input[type="number"] {
 /* one place only – same box model for both */
 select,
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+input[type="file"] {
   min-height: 2.2rem;   /* pick a single number (2 rem + borders + arrow space)  */
   padding:   0.5rem;    /* identical vertical padding                            */
   line-height: 1;       /* keeps UA defaults from adding extra height            */
@@ -77,38 +82,49 @@ textarea {
   padding: 0.5rem; 
 } 
 
+input[type="file"] {
+  display: none; /* hide the native control; we trigger via a styled button */
+}
+
+.file-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .control-panel {
   margin: 0 auto;
   max-width: var(--app-max-width);
   width: 100%;
-  padding: 1rem;
-  background: var(--color-bg);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  overflow-x: hidden;
+  padding: 0;
+  margin-bottom: var(--tight-gap);
 }
 
 .control-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  grid-auto-rows: 90px;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: var(--tight-gap);
   width: 100%;
+  padding: 0;
 }
 
 .control-row>* {
   min-width: 0;
-  flex: 1 1 auto;
   align-self: stretch;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   color: var(--color-fg);
+  min-height: 90px;
 }
 
 .control-unit {
-  flex: 1 1 10rem; 
-  max-width: 200px;
+  flex: 1 1 0;
+  max-width: none;
+  min-width: 0;
   display: flex;
   font-size: 1rem;
   flex-direction: column;
@@ -118,11 +134,68 @@ textarea {
   padding: 0.35rem;
   text-transform: uppercase;
   color: var(--color-fg);
+  height: 100%;
+  min-height: 90px;
+  justify-content: space-between;
 }
 
 .control-unit input {
   max-width: auto;
   font-size: 1rem;
+}
+
+.tight-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: var(--tight-gap);
+  grid-auto-rows: 90px;
+}
+
+.tight-row > * {
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tight-row > button,
+.tight-row > .control-unit,
+.tight-row > .species-label {
+  width: 100%;
+}
+
+.span-2 { grid-column: span 2; }
+.span-3 { grid-column: span 3; }
+.span-4 { grid-column: span 4; }
+
+.species-label {
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.genome-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  grid-template-rows: repeat(2, 90px);
+  gap: var(--tight-gap);
+}
+
+.genome-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+}
+
+#genomeList {
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.spacer {
+  visibility: hidden;
 }
 
 .color-square {
@@ -145,13 +218,15 @@ button {
   align-items: center;
   justify-content: center;
   background: var(--input-color);
-  color: var(--color-bg);
+  color: var(--color-fg);
   padding: 10px 12px;
   font-size: 1rem;
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s ease;
-  max-width: 150px;
+  width: 100%;
+  height: 100%;
+  min-height: 90px;
   border-top: 4px solid var(--color-fg);
   border-left: 4px solid var(--color-fg);
   border-bottom: 4px solid var(--color-line);
@@ -166,11 +241,11 @@ button:hover {
 
 canvas {
   width: 100%;
-  max-width: 900px;
+  max-width: var(--app-max-width);
   height: auto;
   aspect-ratio: 1 / 1;
   display: block;
-  margin: 4rem auto;
+  margin: 2rem auto 4rem;
   border: 2px solid #4b094a;
   min-width: 350px;
 }
