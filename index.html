@@ -13,7 +13,7 @@
 
   <div class="control-panel">
     <div class="genome-grid">
-      <button id="browseBtn" type="button" style="grid-column:1; grid-row:1;">Browse</button>
+      <button id="browseBtn" type="button" style="grid-column:1; grid-row:1;">Load genomes</button>
       <button id="clearGenomes" style="grid-column:1; grid-row:2;">Clear genomes</button>
 
       <div class="control-unit genome-list" style="grid-column:2 / span 3; grid-row:1 / span 2;">
@@ -121,7 +121,7 @@
           <label for="speed">Speed:</label>
           <span id="spdVal">120 ms</span>
         </div>
-        <input id="speed" type="range" min="20" max="1000" step="20" value="120">
+        <input id="speed" type="range" min="20" max="500" step="1" value="120">
       </div>
       <button id="make">Restart World</button>
       <button id="clear">Clear</button>

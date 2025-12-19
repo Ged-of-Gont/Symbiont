@@ -152,6 +152,30 @@ const y1sInput = $('y1s');
 const y2bInput = $('y2b');
 const y2sInput = $('y2s');
 
+/* ---------- speed slider (log-ish, inverted: right = faster) ---------- */
+const sliderMin = speedInp ? Number(speedInp.min) || 20 : 20;
+const sliderMax = speedInp ? Number(speedInp.max) || 500 : 500;
+const intervalMin = 20;
+const intervalMax = 500;
+const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+const logMin = Math.log(intervalMin);
+const logMax = Math.log(intervalMax);
+const sliderRange = sliderMax - sliderMin;
+const sliderToInterval = v => {
+  const t = sliderRange ? (clamp(v, sliderMin, sliderMax) - sliderMin) / sliderRange : 0;
+  // log taper: more travel allocated to the faster (lower ms) end
+  const logVal = logMax - t * (logMax - logMin);
+  return Math.round(Math.exp(logVal));
+};
+const intervalToSlider = interval => {
+  const clamped = clamp(interval, intervalMin, intervalMax);
+  const logVal = Math.log(clamped);
+  const t = (logMax - logVal) / (logMax - logMin);
+  return sliderMin + t * sliderRange;
+};
+if (speedInp) speedInp.value = intervalToSlider(S.interval);
+if (spdVal) spdVal.textContent = `${S.interval} ms`;
+
 function clearSpeciesGenome(species) {
   if (species === 1) {
     S.genome1 = null;
@@ -209,6 +233,12 @@ clrBtn.onclick = () => {
     row.fill(0);
     S.fade[r].fill(0);
   });
+  // Clearing should also halt a running simulation (same as pressing Stop)
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    runBtn.textContent = 'Start';
+  }
 };
 
 stepBtn.onclick = () => stepGeneration();
@@ -237,7 +267,7 @@ fadeBtn.onclick = () => {
 };
 
 speedInp.oninput = () => {
-  S.interval = +speedInp.value;
+  S.interval = sliderToInterval(+speedInp.value);
   spdVal.textContent = `${S.interval} ms`;
   if (timer) {
     clearInterval(timer);
