@@ -1,7 +1,7 @@
 // src/state.js
 export const state = {
     /* world geometry */
-    N: 36,
+    N: 40,
     cell: 10,
   
     /* 2‑D arrays (filled by alloc) */

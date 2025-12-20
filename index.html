@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Symbiont v0.1</title>
+  <title>Symbiont v0.2</title>
   <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -23,8 +23,6 @@
 
       <button id="assignG1" style="grid-column:5; grid-row:1;">Set as Species 1</button>
       <button id="assignG2" style="grid-column:5; grid-row:2;">Set as Species 2</button>
-
-      <input id="genomeFile" type="file" accept=".json,application/json" aria-label="Load genomes">
     </div>
   </div>
 
@@ -34,21 +32,21 @@
      
       <div class="control-unit">
         <label for="b1">#&nbsp;<span class="color-square species1"></span>to spawn</label>
-        <input id="b1" type="text" value="3">
+        <input id="b1" type="text">
       </div>
 
       <div class="control-unit">
         <label for="s1">#&nbsp;<span class="color-square species1"></span>to survive</label>
-        <input id="s1" type="text" value="2,3">
+        <input id="s1" type="text">
       </div>
 
       <div class="control-unit">
         <label for="y1b">#&nbsp;<span class="color-square species2"></span>to spawn</label>
-        <input id="y1b" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
+        <input id="y1b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
       <div class="control-unit">
         <label for="y1s">#&nbsp;<span class="color-square species2"></span>to survive</label>
-        <input id="y1s" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
+        <input id="y1s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
     </div>
   </div>
@@ -59,21 +57,21 @@
       
       <div class="control-unit">
         <label for="b2">#&nbsp;<span class="color-square species2"></span>to spawn</label>
-        <input id="b2" type="text" value="3">
+        <input id="b2" type="text">
       </div>
 
       <div class="control-unit">
         <label for="s2">#&nbsp;<span class="color-square species2"></span>to Survive</label>
-        <input id="s2" type="text" value="2,3">
+        <input id="s2" type="text">
       </div>
 
       <div class="control-unit">
         <label for="y2b">#&nbsp;<span class="color-square species1"></span>to spawn</label>
-        <input id="y2b" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
+        <input id="y2b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
       <div class="control-unit">
         <label for="y2s">#&nbsp;<span class="color-square species1"></span>to survive</label>
-        <input id="y2s" type="text" value="0" inputmode="text" title="Opposite-species counts (other-only/any)">
+        <input id="y2s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
       </div>
     </div>
   </div>
@@ -82,14 +80,14 @@
     <div class="control-row tight-row">
       <div class="control-unit">
         <label>Grid&nbsp;Size</label>
-        <input id="size" type="number" min="5" value="36">
+        <input id="size" type="number" min="5" value="40">
       </div>
       <div class="control-unit">
         <label>When tied:</label>
         <select id="tie">
           <option value="none">leave empty</option>
-          <option value="s1">green wins</option>
-          <option value="s2">pink wins</option>
+          <option value="s1">species 1 wins</option>
+          <option value="s2">species 2 wins</option>
           <option value="rand">random</option>
         </select>
       </div>
@@ -131,6 +129,24 @@
   </div>
 
   <canvas id="c" width="800" height="800"></canvas>
+
+  <!-- Bundled genome picker (hidden until opened) -->
+  <div id="bundleModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Select bundled genome file</h3>
+        <button id="bundleClose" aria-label="Close bundled genome picker">×</button>
+      </div>
+      <div class="modal-body">
+        <label for="bundleSelect">Available bundles:</label>
+        <select id="bundleSelect"></select>
+      </div>
+      <div class="modal-footer">
+        <button id="bundleCancel" type="button">Cancel</button>
+        <button id="bundleLoad" type="button">Load</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="/src/main.js"></script>
 </body>

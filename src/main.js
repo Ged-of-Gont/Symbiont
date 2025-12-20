@@ -2,10 +2,10 @@
 import "./style.css";
 import { state as S, alloc } from './state.js';
 import {
-  readRules,
   stepGeneration,
   setGenomeForSpecies,
-  clearGenomes
+  clearGenomes,
+  setManualRulesForSpecies
 } from './rules.js';
 
 /* ------- DOM helpers ------- */
@@ -133,16 +133,25 @@ const speedInp = $('speed');
 const spdVal   = $('spdVal');
 const labelS1  = $('labelS1');
 const labelS2  = $('labelS2');
-const genomeFile   = $('genomeFile');
 const genomeList   = $('genomeList');
 const assignG1Btn  = $('assignG1');
 const assignG2Btn  = $('assignG2');
 const clearGBtn    = $('clearGenomes');
 const genomeStatus = $('genomeStatus');
 const browseBtn    = $('browseBtn');
+const tieSelect    = $('tie');
+const bundleModal  = $('bundleModal');
+const bundleSelect = $('bundleSelect');
+const bundleLoad   = $('bundleLoad');
+const bundleCancel = $('bundleCancel');
+const bundleClose  = $('bundleClose');
 
 let loadedGenomes = [];
 let lastFileName = null;
+// Add bundled genome files here (relative to public/). First entry is default.
+const bundledGenomeFiles = [
+  '2025.12.20_genome.json'
+];
 const b1Input = $('b1');
 const s1Input = $('s1');
 const b2Input = $('b2');
@@ -151,6 +160,13 @@ const y1bInput = $('y1b');
 const y1sInput = $('y1s');
 const y2bInput = $('y2b');
 const y2sInput = $('y2s');
+// ensure rule inputs start empty to avoid misleading defaults
+[b1Input, s1Input, b2Input, s2Input, y1bInput, y1sInput, y2bInput, y2sInput].forEach(inp => {
+  if (inp) {
+    inp.value = '';
+    inp.removeAttribute('value');
+  }
+});
 
 /* ---------- speed slider (log-ish, inverted: right = faster) ---------- */
 const sliderMin = speedInp ? Number(speedInp.min) || 20 : 20;
@@ -179,17 +195,13 @@ if (spdVal) spdVal.textContent = `${S.interval} ms`;
 function clearSpeciesGenome(species) {
   if (species === 1) {
     S.genome1 = null;
-    S.rules1Birth = null;
-    S.rules1Surv = null;
     labelS1.innerHTML = 'SPECIES<br> 1: custom';
   } else {
     S.genome2 = null;
-    S.rules2Birth = null;
-    S.rules2Surv = null;
     labelS2.innerHTML = 'SPECIES<br> 2: custom';
   }
-  // push current text-field rules into state so the sim follows UI edits
-  readRules();
+  // rebuild this species' rules from inputs so the sim follows UI edits
+  setManualRulesForSpecies(species);
 }
 
 [b1Input, s1Input, y1bInput, y1sInput].forEach(inp => {
@@ -197,6 +209,10 @@ function clearSpeciesGenome(species) {
 });
 [b2Input, s2Input, y2bInput, y2sInput].forEach(inp => {
   inp?.addEventListener('input', () => clearSpeciesGenome(2));
+});
+
+tieSelect?.addEventListener('change', () => {
+  S.tieMode = tieSelect.value;
 });
 
 rand1Btn.onclick = () => {
@@ -282,15 +298,9 @@ makeBtn.onclick = () => {
     timer = null;
     runBtn.textContent = 'Start';
   }
-  // If genomes are loaded, keep them; otherwise pull manual rules from UI.
-  const genomesLoaded = S.rules1Birth && S.rules1Surv && S.rules2Birth && S.rules2Surv;
-  if (!genomesLoaded) {
-    readRules();
-  } else {
-    // Still sync tieMode from the dropdown for genome mode.
-    const tieSelect = document.getElementById('tie');
-    if (tieSelect) S.tieMode = tieSelect.value;
-  }
+  if (tieSelect) S.tieMode = tieSelect.value;
+  if (!S.genome1) setManualRulesForSpecies(1);
+  if (!S.genome2) setManualRulesForSpecies(2);
   S.N = Math.max(5, +$('size').value || 50);
   canvas.height = canvas.width;
   alloc(canvas);
@@ -307,39 +317,61 @@ function renderGenomeList() {
     genomeList.appendChild(opt);
   });
   if (loadedGenomes.length) {
-    const name = lastFileName ? `${lastFileName}` : 'unsaved';
+    const name = lastFileName ? `${lastFileName}` : 'bundled';
     genomeStatus.textContent = `Loaded: ${name} (${loadedGenomes.length} genomes)`;
   } else {
     genomeStatus.textContent = 'No genomes loaded';
   }
 }
 
-genomeFile?.addEventListener('change', e => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  lastFileName = file.name;
-  const reader = new FileReader();
-  reader.onload = evt => {
-    try {
-      const data = JSON.parse(evt.target.result);
-      if (!Array.isArray(data)) throw new Error('File must be a JSON array of genomes');
-      loadedGenomes = data
-        .filter(g => g && typeof g.birth === 'string' && typeof g.survival === 'string')
-        .map(g => ({
-          id: g.id ?? 'n/a',
-          birth: String(g.birth).trim(),
-          survival: String(g.survival).trim()
-        }));
-      lastFileName = file.name;
-      renderGenomeList();
-    } catch (err) {
-      genomeStatus.textContent = `Load error: ${err.message}`;
-    }
-  };
-  reader.readAsText(file);
-});
+function populateBundleSelect() {
+  if (!bundleSelect) return;
+  bundleSelect.innerHTML = '';
+  bundledGenomeFiles.forEach(file => {
+    const opt = document.createElement('option');
+    opt.value = file;
+    opt.textContent = file;
+    bundleSelect.appendChild(opt);
+  });
+}
 
-browseBtn?.addEventListener('click', () => genomeFile?.click());
+async function loadBundledGenomes(fileName) {
+  const path = fileName.startsWith('/') ? fileName : `/${fileName}`;
+  genomeStatus.textContent = 'Loading bundled genomes...';
+  try {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Bundled file must be a JSON array of genomes');
+    loadedGenomes = data
+      .filter(g => g && typeof g.birth === 'string' && typeof g.survival === 'string')
+      .map(g => ({
+        id: g.id ?? 'n/a',
+        birth: String(g.birth).trim(),
+        survival: String(g.survival).trim()
+      }));
+    lastFileName = path.replace(/^\//, '');
+    renderGenomeList();
+  } catch (err) {
+    genomeStatus.textContent = `Load error: ${err.message}`;
+  } finally {
+    if (bundleModal) bundleModal.classList.add('hidden');
+  }
+}
+
+function openBundleModal() {
+  populateBundleSelect();
+  if (bundleModal) bundleModal.classList.remove('hidden');
+}
+
+browseBtn?.addEventListener('click', openBundleModal);
+bundleLoad?.addEventListener('click', () => {
+  const file = bundleSelect?.value || bundledGenomeFiles[0];
+  loadBundledGenomes(file);
+});
+const closeModal = () => bundleModal?.classList.add('hidden');
+bundleCancel?.addEventListener('click', closeModal);
+bundleClose?.addEventListener('click', closeModal);
 
 function pairsFromBits(bits) {
   if (typeof bits !== 'string' || bits.length !== 16) return [];
@@ -441,12 +473,16 @@ assignG2Btn?.addEventListener('click', () => assignGenome(2));
 clearGBtn?.addEventListener('click', () => {
   clearGenomes();
   lastFileName = null;
+  loadedGenomes = [];
+  renderGenomeList();
   labelS1.innerHTML = 'SPECIES<br> 1:';
   labelS2.innerHTML = 'SPECIES<br> 2:';
   // clear fields visually
   [b1Input, s1Input, y1bInput, y1sInput].forEach(inp => { inp.value = ''; inp.setAttribute('value',''); });
   [b2Input, s2Input, y2bInput, y2sInput].forEach(inp => { inp.value = ''; inp.setAttribute('value',''); });
   genomeStatus.textContent = 'No genomes loaded';
+  setManualRulesForSpecies(1);
+  setManualRulesForSpecies(2);
 });
 
 /* ---------- initial boot ---------- */
@@ -457,7 +493,8 @@ if (sizeInput) {
   S.N = n;
 }
 alloc(canvas);
-readRules();
+setManualRulesForSpecies(1);
+setManualRulesForSpecies(2);
 draw();
 requestAnimationFrame(animate);
 

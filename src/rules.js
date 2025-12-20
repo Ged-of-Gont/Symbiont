@@ -16,6 +16,25 @@ export function parseRule(str) {
   return set;
 }
 
+const clampNeighborCounts = set =>
+  new Set([...set].filter(n => Number.isFinite(n) && n >= 1 && n <= 8));
+
+function buildCodes(selfSet, otherSet) {
+  const codes = [];
+  const s = clampNeighborCounts(selfSet);
+  const o = clampNeighborCounts(otherSet);
+  for (let total = 1; total <= 8; total++) {
+    const hasSelf = s.has(total);
+    const hasOther = o.has(total);
+    let code = '00';
+    if (hasSelf && hasOther) code = '11';
+    else if (hasSelf) code = '10';
+    else if (hasOther) code = '01';
+    codes.push(code);
+  }
+  return codes;
+}
+
 function neigh(r, c, type) {
   let n = 0;
   const { N, grid, wrapEdges } = S;
@@ -79,40 +98,39 @@ export function clearGenomes() {
   S.rules2Birth = S.rules2Surv = null;
 }
 
-/* ---------- UI → state ---------- */
-export function readRules() {
-  clearGenomes(); // switching to manual input clears loaded genomes
+/* ---------- UI → state (manual inputs -> genome codes) ---------- */
+function buildRulesFromUI(species) {
   const $ = id => document.getElementById(id);
-  S.B1 = parseRule($('b1').value);
-  S.S1 = parseRule($('s1').value);
-  S.B2 = parseRule($('b2').value);
-  S.S2 = parseRule($('s2').value);
+  if (species === 1) {
+    const bSelf = parseRule($('b1').value);
+    const bOther = parseRule($('y1b').value);
+    const sSelf = parseRule($('s1').value);
+    const sOther = parseRule($('y1s').value);
+    S.genome1 = null;
+    S.rules1Birth = buildCodes(bSelf, bOther);
+    S.rules1Surv = buildCodes(sSelf, sOther);
+  } else if (species === 2) {
+    const bSelf = parseRule($('b2').value);
+    const bOther = parseRule($('y2b').value);
+    const sSelf = parseRule($('s2').value);
+    const sOther = parseRule($('y2s').value);
+    S.genome2 = null;
+    S.rules2Birth = buildCodes(bSelf, bOther);
+    S.rules2Surv = buildCodes(sSelf, sOther);
+  } else {
+    throw new Error('species must be 1 or 2');
+  }
+}
 
-  S.Y1b = +$('y1b').value;
-  S.Y1s = +$('y1s').value;
-  S.Y2b = +$('y2b').value;
-  S.Y2s = +$('y2s').value;
-  S.tieMode = $('tie').value;
+export function setManualRulesForSpecies(species) {
+  buildRulesFromUI(species);
+  const tieSelect = document.getElementById('tie');
+  if (tieSelect) S.tieMode = tieSelect.value;
 }
 
 /* ---------- one generation ---------- */
 export function stepGeneration() {
-  const {
-    N,
-    grid,
-    next,
-    B1,
-    S1,
-    B2,
-    S2,
-    Y1b,
-    Y1s,
-    Y2b,
-    Y2s,
-    tieMode
-  } = S;
-
-  const useGenomes = S.rules1Birth && S.rules1Surv && S.rules2Birth && S.rules2Surv;
+  const { N, grid, next, tieMode } = S;
 
   for (let r = 0; r < N; r++) {
     for (let c = 0; c < N; c++) {
@@ -123,35 +141,21 @@ export function stepGeneration() {
 
       /* survival */
       if (state === 1) {
-        if (useGenomes) {
-          const code = total >= 1 && total <= 8 ? S.rules1Surv[total - 1] : '00';
-          next[r][c] = allowByCode(code, n1, n2) ? 1 : 0;
-        } else {
-          next[r][c] = S1.has(n1) && n2 >= Y1s ? 1 : 0;
-        }
+        const code = total >= 1 && total <= 8 ? S.rules1Surv?.[total - 1] : '00';
+        next[r][c] = allowByCode(code, n1, n2) ? 1 : 0;
         continue;
       }
       if (state === 2) {
-        if (useGenomes) {
-          const code = total >= 1 && total <= 8 ? S.rules2Surv[total - 1] : '00';
-          next[r][c] = allowByCode(code, n2, n1) ? 2 : 0;
-        } else {
-          next[r][c] = S2.has(n2) && n1 >= Y2s ? 2 : 0;
-        }
+        const code = total >= 1 && total <= 8 ? S.rules2Surv?.[total - 1] : '00';
+        next[r][c] = allowByCode(code, n2, n1) ? 2 : 0;
         continue;
       }
 
       /* birth */
-      let greenOK, redOK;
-      if (useGenomes) {
-        const code1 = total >= 1 && total <= 8 ? S.rules1Birth[total - 1] : '00';
-        const code2 = total >= 1 && total <= 8 ? S.rules2Birth[total - 1] : '00';
-        greenOK = allowByCode(code1, n1, n2);
-        redOK   = allowByCode(code2, n2, n1);
-      } else {
-        greenOK = B1.has(n1) && n2 >= Y1b;
-        redOK   = B2.has(n2) && n1 >= Y2b;
-      }
+      const code1 = total >= 1 && total <= 8 ? S.rules1Birth?.[total - 1] : '00';
+      const code2 = total >= 1 && total <= 8 ? S.rules2Birth?.[total - 1] : '00';
+      const greenOK = allowByCode(code1, n1, n2);
+      const redOK   = allowByCode(code2, n2, n1);
 
       if (greenOK && !redOK) next[r][c] = 1;
       else if (redOK && !greenOK) next[r][c] = 2;
