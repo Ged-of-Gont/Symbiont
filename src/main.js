@@ -131,7 +131,6 @@ const wrapBtn  = $('wrap');
 const fadeBtn  = $('fade');
 const makeBtn  = $('make');
 const speedInp = $('speed');
-const spdVal   = $('spdVal');
 const labelS1  = $('labelS1');
 const labelS2  = $('labelS2');
 const genomeList   = $('genomeList');
@@ -150,6 +149,13 @@ const bundleClose  = $('bundleClose');
 /* ---------- icon helpers ---------- */
 const ICON_PLAY  = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M6 4l12 8-12 8z"/></svg>';
 const ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+const setWrapButtonState = isOn => {
+  if (!wrapBtn) return;
+  wrapBtn.dataset.state = isOn ? 'on' : 'off';
+  wrapBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+  const sr = wrapBtn.querySelector('.sr-only');
+  if (sr) sr.textContent = `Wrap edges ${isOn ? 'on' : 'off'}`;
+};
 
 const setRunButtonState = isRunning => {
   if (!runBtn) return;
@@ -210,10 +216,10 @@ const y2sInput = $('y2s');
 });
 
 /* ---------- speed slider (log-ish, inverted: right = faster) ---------- */
-const sliderMin = speedInp ? Number(speedInp.min) || 20 : 20;
-const sliderMax = speedInp ? Number(speedInp.max) || 500 : 500;
-const intervalMin = 20;
-const intervalMax = 500;
+const sliderMin = speedInp ? Number(speedInp.min) || 0 : 0;
+const sliderMax = speedInp ? Number(speedInp.max) || 100 : 100;
+const intervalMin = 50;
+const intervalMax = 1000;
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 const logMin = Math.log(intervalMin);
 const logMax = Math.log(intervalMax);
@@ -231,7 +237,6 @@ const intervalToSlider = interval => {
   return sliderMin + t * sliderRange;
 };
 if (speedInp) speedInp.value = intervalToSlider(S.interval);
-if (spdVal) spdVal.textContent = `${S.interval} ms`;
 
 function clearSpeciesGenome(species) {
   if (species === 1) {
@@ -316,7 +321,7 @@ runBtn.onclick  = () => {
 
 wrapBtn.onclick = () => {
   S.wrapEdges = !S.wrapEdges;
-  wrapBtn.textContent = `Wrap: ${S.wrapEdges ? 'On' : 'Off'}`;
+  setWrapButtonState(S.wrapEdges);
 };
 
 fadeBtn.onclick = () => {
@@ -327,10 +332,9 @@ fadeBtn.onclick = () => {
 
 speedInp.oninput = () => {
   S.interval = sliderToInterval(+speedInp.value);
-  spdVal.textContent = `${S.interval} ms`;
   if (timer) {
     clearInterval(timer);
-    timer = setInterval(stepGeneration, S.interval);
+    timer = setInterval(stepForward, S.interval);
   }
 };
 
@@ -539,6 +543,7 @@ if (sizeInput) {
 alloc(canvas);
 history.length = 0;
 setRunButtonState(false);
+setWrapButtonState(S.wrapEdges);
 setManualRulesForSpecies(1);
 setManualRulesForSpecies(2);
 draw();

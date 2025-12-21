@@ -1,8 +1,8 @@
 :root {
-  --color-bg: #0d080b;
-  --input-color: #4e3737;
-  --color-fg: #aadeee;
-  --color-line: #f9645c;
+  --color-bg: #1d0513;
+  --input-color: #321b5c;
+  --color-fg: #d05bed;
+  --color-line: #f9ee5c;
   --color-accent: #edebd4;
   --species2: #17e197;
   --species1: #f62a2a;
@@ -127,12 +127,6 @@ input[type="file"] {
   display: none; /* hide the native control; we trigger via a styled button */
 }
 
-.file-picker {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .control-panel {
   margin: 0 auto;
   max-width: var(--app-max-width);
@@ -185,6 +179,118 @@ input[type="file"] {
   font-size: 1rem;
 }
 
+.speed-control {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.speed-slider {
+  flex: 1 1 auto;
+  max-width: 240px;
+  display: flex;
+  align-items: center;
+}
+
+.speed-control input[type="range"] {
+  width: 100%;
+}
+
+.speed-control input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  background: var(--color-line);
+  border: none;
+}
+
+.speed-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  background: var(--color-fg);
+  border: none;
+  border-radius: 0;
+  transform: rotate(45deg);
+  cursor: pointer;
+}
+
+.speed-control input[type="range"]::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  background: var(--color-fg);
+  border: none;
+  border-radius: 0;
+  transform: rotate(45deg);
+  cursor: pointer;
+}
+
+.speed-control input[type="range"]::-moz-range-track {
+  height: 10px;
+  background: var(--color-line);
+  border: none;
+}
+
+.speed-icon {
+  width: 3.2em;
+  height: 3.2em;
+}
+
+.player-icon {
+  width: 3.2em;
+  height: 3.2em;
+  display: block;
+  margin: 0 auto;
+}
+
+.die-icon {
+  width: 2.97825em;
+  height: 2.97825em;
+}
+
+.species1-fill { fill: var(--species1); }
+.species2-fill { fill: var(--species2); }
+
+.die-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.player-icon rect {
+  stroke: none;
+}
+.assign-icon {
+  height: 3.2em;
+  width: auto; /* keep the SVG’s native aspect ratio and relative proportions */
+}
+
+.wrap-icon {
+  height: 3.2em;
+  width: auto;
+}
+
+#wrap .wrap-off {
+  display: none;
+}
+
+#wrap[data-state="off"] .wrap-on {
+  display: none;
+}
+
+#wrap[data-state="off"] .wrap-off {
+  display: inline;
+}
+.wrap-icon.wrap-on { height: 3.52em; width: auto; }
+.wrap-icon.wrap-off { height: 2.72em; width: auto; }
+
+.control-row button svg {
+  display: block;
+  margin: auto;
+}
+
 .tight-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(150px, 1fr));
@@ -202,6 +308,11 @@ input[type="file"] {
 .tight-row > .control-unit,
 .tight-row > .species-label {
   width: 100%;
+}
+
+.seven-cols {
+  /* evenly divide available space into 7 columns; no hardcoded min width */
+  grid-template-columns: repeat(7, 1fr);
 }
 
 .span-2 { grid-column: span 2; }
@@ -234,6 +345,12 @@ input[type="file"] {
   min-height: 0;
   flex: 1 1 auto;
 }
+
+#genomeList option:checked {
+  background: var(--color-fg);
+  color: var(--color-line);
+}
+
 
 .spacer {
   visibility: hidden;
