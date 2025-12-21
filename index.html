@@ -9,126 +9,158 @@
 </head>
 
 <body>
-<h1>SYMBIONT V0.2</h1>
+  
 
-  <div class="control-panel">
-    <div class="genome-grid">
-      <button id="browseBtn" type="button" style="grid-column:1; grid-row:1;">Load genomes</button>
-      <button id="clearGenomes" style="grid-column:1; grid-row:2;">Clear genomes</button>
+  <div class="app-shell">
+    <div class="control-stack">
+      <h1>SYMBIONT V0.2</h1>
+      <div class="control-panel">
+        <div class="genome-grid">
+          <button id="browseBtn" type="button" style="grid-column:1; grid-row:1;">Load genomes</button>
+          <button id="clearGenomes" style="grid-column:1; grid-row:2;">Clear genomes</button>
 
-      <div class="control-unit genome-list" style="grid-column:2 / span 3; grid-row:1 / span 2;">
-        <div id="genomeStatus">No genomes loaded</div>
-        <select id="genomeList" size="8"></select>
-      </div>
+          <div class="control-unit genome-list" style="grid-column:2 / span 3; grid-row:1 / span 2;">
+            <div id="genomeStatus">No genomes loaded</div>
+            <select id="genomeList" size="8"></select>
+          </div>
 
-      <button id="assignG1" style="grid-column:5; grid-row:1;">Set as Species 1</button>
-      <button id="assignG2" style="grid-column:5; grid-row:2;">Set as Species 2</button>
-    </div>
-  </div>
-
-  <div class="control-panel">
-    <div class="control-row tight-row">
-      <div class="species-label" style="color: var(--species1);"><h3 id="labelS1">SPECIES<br> 1:</h3></div>
-     
-      <div class="control-unit">
-        <label for="b1">#&nbsp;<span class="color-square species1"></span>to spawn</label>
-        <input id="b1" type="text">
-      </div>
-
-      <div class="control-unit">
-        <label for="s1">#&nbsp;<span class="color-square species1"></span>to survive</label>
-        <input id="s1" type="text">
-      </div>
-
-      <div class="control-unit">
-        <label for="y1b">#&nbsp;<span class="color-square species2"></span>to spawn</label>
-        <input id="y1b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
-      </div>
-      <div class="control-unit">
-        <label for="y1s">#&nbsp;<span class="color-square species2"></span>to survive</label>
-        <input id="y1s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
-      </div>
-    </div>
-  </div>
-
-  <div class="control-panel">
-    <div class="control-row tight-row">
-      <div class="species-label" style="color: var(--species2);"><h3 id="labelS2">SPECIES<br> 2:</h3></div>
-      
-      <div class="control-unit">
-        <label for="b2">#&nbsp;<span class="color-square species2"></span>to spawn</label>
-        <input id="b2" type="text">
-      </div>
-
-      <div class="control-unit">
-        <label for="s2">#&nbsp;<span class="color-square species2"></span>to Survive</label>
-        <input id="s2" type="text">
-      </div>
-
-      <div class="control-unit">
-        <label for="y2b">#&nbsp;<span class="color-square species1"></span>to spawn</label>
-        <input id="y2b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
-      </div>
-      <div class="control-unit">
-        <label for="y2s">#&nbsp;<span class="color-square species1"></span>to survive</label>
-        <input id="y2s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
-      </div>
-    </div>
-  </div>
-
-  <div class="control-panel">
-    <div class="control-row tight-row">
-      <div class="control-unit">
-        <label>Grid&nbsp;Size</label>
-        <input id="size" type="number" min="5" value="40">
-      </div>
-      <div class="control-unit">
-        <label>When tied:</label>
-        <select id="tie">
-          <option value="none">leave empty</option>
-          <option value="s1">species 1 wins</option>
-          <option value="s2">species 2 wins</option>
-          <option value="rand">random</option>
-        </select>
-      </div>
-      <button id="wrap">Wrap: On</button>
-      <button id="fade">Fade: Off</button>
-      <div class="spacer"></div>
-    </div>
-  </div>
-
-  <div class="control-panel">
-    <div class="control-row tight-row">
-      <button id="rand1">Sprinkle<span class="color-square species1"></span></button>
-      <button id="rand2">Sprinkle<span class="color-square species2"></span></button>
-      <button id="randBoth">
-        Sprinkle&nbsp;<span style="white-space: nowrap;">
-          <span class="color-square species1"></span>&nbsp;&&nbsp; 
-          <span class="color-square species2"></span>
-        </span>
-      </button>
-      <div class="spacer"></div>
-    </div>
-
-  </div>
-
-  <div class="control-panel">
-    <div class="control-row tight-row">
-      <div class="control-unit">
-        <div style="display: flex; justify-content: space-between;">
-          <label for="speed">Speed:</label>
-          <span id="spdVal">120 ms</span>
+          <button id="assignG1" style="grid-column:5; grid-row:1;">Set as Species 1</button>
+          <button id="assignG2" style="grid-column:5; grid-row:2;">Set as Species 2</button>
         </div>
-        <input id="speed" type="range" min="20" max="500" step="1" value="120">
       </div>
-      <button id="make">Restart World</button>
-      <button id="clear">Clear</button>
-      <button id="run">Start</button>
-      <button id="step">1 Step Forward</button>
+
+      <div class="control-panel">
+        <div class="control-row tight-row">
+          <div class="species-label" style="color: var(--species1);"><h3 id="labelS1">SPECIES<br> 1:</h3></div>
+        
+          <div class="control-unit">
+            <label for="b1">#&nbsp;<span class="color-square species1"></span>to spawn</label>
+            <input id="b1" type="text">
+          </div>
+
+          <div class="control-unit">
+            <label for="s1">#&nbsp;<span class="color-square species1"></span>to survive</label>
+            <input id="s1" type="text">
+          </div>
+
+          <div class="control-unit">
+            <label for="y1b">#&nbsp;<span class="color-square species2"></span>to spawn</label>
+            <input id="y1b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+          </div>
+          <div class="control-unit">
+            <label for="y1s">#&nbsp;<span class="color-square species2"></span>to survive</label>
+            <input id="y1s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+          </div>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <div class="control-row tight-row">
+          <div class="species-label" style="color: var(--species2);"><h3 id="labelS2">SPECIES<br> 2:</h3></div>
+          
+          <div class="control-unit">
+            <label for="b2">#&nbsp;<span class="color-square species2"></span>to spawn</label>
+            <input id="b2" type="text">
+          </div>
+
+          <div class="control-unit">
+            <label for="s2">#&nbsp;<span class="color-square species2"></span>to Survive</label>
+            <input id="s2" type="text">
+          </div>
+
+          <div class="control-unit">
+            <label for="y2b">#&nbsp;<span class="color-square species1"></span>to spawn</label>
+            <input id="y2b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+          </div>
+          <div class="control-unit">
+            <label for="y2s">#&nbsp;<span class="color-square species1"></span>to survive</label>
+            <input id="y2s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+          </div>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <div class="control-row tight-row">
+          <div class="control-unit">
+            <label>Grid&nbsp;Size</label>
+            <input id="size" type="number" min="5" value="40">
+          </div>
+          <div class="control-unit">
+            <label>When tied:</label>
+            <select id="tie">
+              <option value="none">leave empty</option>
+              <option value="s1">species 1 wins</option>
+              <option value="s2">species 2 wins</option>
+              <option value="rand">random</option>
+            </select>
+          </div>
+          <button id="wrap">Wrap: On</button>
+          <button id="fade">Fade: Off</button>
+          <button id="make" aria-label="Restart world">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+              <path transform="translate(12 12) rotate(90) scale(0.0465) translate(-172 -172)" d="M254.37 22.255c-1.161-.642-2.53-.795-3.803-.428-1.274.367-2.35 1.226-2.992 2.387l-21.758 39.391c-1.335 2.417-.458 5.459 1.96 6.794C264.616 90.748 287.5 129.495 287.5 171.52c0 63.649-51.782 115.431-115.431 115.431S56.638 235.169 56.638 171.52c0-23.888 7.557-47.427 21.382-66.897l34.478 34.478c1.338 1.337 3.315 1.806 5.109 1.21 1.795-.596 3.101-2.152 3.374-4.024L139.963 6.271c.228-1.563-.295-3.141-1.412-4.258-1.117-1.117-2.7-1.639-4.258-1.412L4.278 19.584c-1.872.273-3.428 1.579-4.023 3.374-.596 1.795-.127 3.772 1.21 5.109l37.292 37.292C14.788 95.484 1.638 133 1.638 171.52c0 93.976 76.455 170.431 170.431 170.431 93.976 0 170.431-76.455 170.431-170.431C342.5 109.478 308.731 52.283 254.37 22.255z"/>
+            </svg>
+            <span class="sr-only">Restart world</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <div class="control-row tight-row">
+          <button id="rand1">Sprinkle<span class="color-square species1"></span></button>
+          <button id="rand2">Sprinkle<span class="color-square species2"></span></button>
+          <button id="randBoth">
+            Sprinkle&nbsp;<span style="white-space: nowrap;">
+              <span class="color-square species1"></span>&nbsp;&&nbsp; 
+              <span class="color-square species2"></span>
+            </span>
+          </button>
+          <div class="spacer"></div>
+        </div>
+
+      </div>
+
+      <div class="control-panel">
+        <div class="control-row tight-row">
+          <div class="control-unit">
+            <div style="display: flex; justify-content: space-between;">
+              <label for="speed">Speed:</label>
+              <span id="spdVal">120 ms</span>
+            </div>
+            <input id="speed" type="range" min="20" max="500" step="1" value="120">
+          </div>
+          <button id="clear" aria-label="Clear grid">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+              <rect x="5" y="5" width="14" height="14"/>
+            </svg>
+            <span class="sr-only">Clear grid</span>
+          </button>
+          <button id="run" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+              <path d="M6 4l12 8-12 8z"/>
+            </svg>
+            <span class="sr-only">Start</span>
+          </button>
+          <button id="stepBack" aria-label="Step backward">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+              <path transform="translate(24 0) scale(-1 1)" d="M5 4L5 20L15 12Z M15 5L18 5L18 19L15 19Z"/>
+            </svg>
+            <span class="sr-only">Step backward</span>
+          </button>
+          <button id="step" aria-label="Step forward">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+              <path d="M5 4L5 20L15 12Z M15 5L18 5L18 19L15 19Z"/>
+            </svg>
+            <span class="sr-only">Step forward</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="c" width="800" height="800"></canvas>
     </div>
   </div>
-
-  <canvas id="c" width="800" height="800"></canvas>
 
   <!-- Bundled genome picker (hidden until opened) -->
   <div id="bundleModal" class="modal hidden">

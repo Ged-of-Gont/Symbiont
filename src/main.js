@@ -125,6 +125,7 @@ const rand2Btn = $('rand2');
 const randBoth = $('randBoth');
 const clrBtn   = $('clear');
 const stepBtn  = $('step');
+const stepBackBtn = $('stepBack');
 const runBtn   = $('run');
 const wrapBtn  = $('wrap');
 const fadeBtn  = $('fade');
@@ -145,6 +146,46 @@ const bundleSelect = $('bundleSelect');
 const bundleLoad   = $('bundleLoad');
 const bundleCancel = $('bundleCancel');
 const bundleClose  = $('bundleClose');
+
+/* ---------- icon helpers ---------- */
+const ICON_PLAY  = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M6 4l12 8-12 8z"/></svg>';
+const ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+
+const setRunButtonState = isRunning => {
+  if (!runBtn) return;
+  runBtn.dataset.state = isRunning ? 'running' : 'stopped';
+  runBtn.setAttribute('aria-pressed', isRunning ? 'true' : 'false');
+  runBtn.innerHTML = `${isRunning ? ICON_PAUSE : ICON_PLAY}<span class="sr-only">${isRunning ? 'Pause simulation' : 'Start simulation'}</span>`;
+};
+
+/* ---------- history for stepping backward ---------- */
+const HISTORY_LIMIT = 500;
+const history = [];
+const cloneGrid = grid => grid.map(row => row.slice());
+
+const pushHistory = () => {
+  history.push(cloneGrid(S.grid));
+  if (history.length > HISTORY_LIMIT) history.shift();
+};
+
+const stepForward = () => {
+  pushHistory();
+  stepGeneration();
+};
+
+const stepBackward = () => {
+  if (!history.length) return;
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    setRunButtonState(false);
+  }
+  S.grid = history.pop();
+  const n = S.grid.length;
+  S.next = Array.from({ length: n }, () => Array(n).fill(0));
+  S.fade = S.grid.map(row => row.map(cell => (cell ? 1 : 0)));
+  draw();
+};
 
 let loadedGenomes = [];
 let lastFileName = null;
@@ -249,25 +290,27 @@ clrBtn.onclick = () => {
     row.fill(0);
     S.fade[r].fill(0);
   });
+  history.length = 0;
   // Clearing should also halt a running simulation (same as pressing Stop)
   if (timer) {
     clearInterval(timer);
     timer = null;
-    runBtn.textContent = 'Start';
+    setRunButtonState(false);
   }
 };
 
-stepBtn.onclick = () => stepGeneration();
+stepBtn.onclick = () => stepForward();
+stepBackBtn?.addEventListener('click', stepBackward);
 
 let timer = null;
 runBtn.onclick  = () => {
   if (timer) {
     clearInterval(timer);
     timer = null;
-    runBtn.textContent = 'Start';
+    setRunButtonState(false);
   } else {
-    timer = setInterval(stepGeneration, S.interval);
-    runBtn.textContent = 'Stop';
+    timer = setInterval(stepForward, S.interval);
+    setRunButtonState(true);
   }
 };
 
@@ -296,8 +339,9 @@ makeBtn.onclick = () => {
   if (timer) {
     clearInterval(timer);
     timer = null;
-    runBtn.textContent = 'Start';
+    setRunButtonState(false);
   }
+  history.length = 0;
   if (tieSelect) S.tieMode = tieSelect.value;
   if (!S.genome1) setManualRulesForSpecies(1);
   if (!S.genome2) setManualRulesForSpecies(2);
@@ -493,6 +537,8 @@ if (sizeInput) {
   S.N = n;
 }
 alloc(canvas);
+history.length = 0;
+setRunButtonState(false);
 setManualRulesForSpecies(1);
 setManualRulesForSpecies(2);
 draw();

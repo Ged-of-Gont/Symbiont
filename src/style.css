@@ -1,12 +1,12 @@
 :root {
   --color-bg: #0d080b;
   --input-color: #4e3737;
-  --color-fg: #81dcf7;
+  --color-fg: #aadeee;
   --color-line: #f9645c;
   --color-accent: #edebd4;
-  --species2: #37eed3;
+  --species2: #17e197;
   --species1: #f62a2a;
-  --app-max-width: clamp(350px, 80vw, 1000px);
+  --app-max-width: clamp(288px, 80vw, 1000px);
   --ui-font:'Share Tech Mono',monospace;
   --tight-gap: 1rem;
 }
@@ -19,6 +19,10 @@ h1, h3 {
   margin: 0;
 }
 
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
 body {
   margin: 0;
   background: var(--color-bg);
@@ -27,6 +31,31 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+}
+
+.app-shell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: 2rem;
+  width: 100%;
+}
+
+.control-stack {
+  flex: 0 1 var(--app-max-width);
+  width: min(100%, var(--app-max-width));
+}
+
+.canvas-wrap {
+  flex: 1 1 clamp(520px, 55vw, var(--app-max-width));
+  min-width: clamp(520px, 55vw, var(--app-max-width));
+  max-width: var(--app-max-width);
+  width: min(100%, var(--app-max-width));
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 *,
@@ -81,6 +110,18 @@ textarea {
   font-weight:500;
   padding: 0.5rem; 
 } 
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 input[type="file"] {
   display: none; /* hide the native control; we trigger via a styled button */
@@ -305,13 +346,28 @@ button:active {
   transform: translateY(2px);
 }
 
+button svg {
+  width: 3.2em;
+  height: 3.2em;
+}
+
 canvas {
   width: 100%;
   max-width: var(--app-max-width);
   height: auto;
   aspect-ratio: 1 / 1;
   display: block;
-  margin: 2rem auto 4rem;
+  margin-bottom: var(--tight-gap);
   border: 2px solid var(--color-line);
-  min-width: 350px;
+}
+
+@media (max-width: 1100px) {
+  .canvas-wrap {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+  canvas {
+    width: min(100%, calc(100vw - 2rem));
+    min-width: 0;
+  }
 }
