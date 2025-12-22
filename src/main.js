@@ -43,7 +43,7 @@ function draw() {
   const mid = Math.floor(N / 2);
   for (let i = 0; i <= N; i++) {
     const p = i * S.cell;
-    ctx.lineWidth = i === mid ? 2 : 1;
+    ctx.lineWidth = i === mid ? 3 : 1;
     ctx.beginPath();
     ctx.moveTo(0, p);
     ctx.lineTo(canvas.width, p);
@@ -127,6 +127,7 @@ const clrBtn   = $('clear');
 const stepBtn  = $('step');
 const stepBackBtn = $('stepBack');
 const runBtn   = $('run');
+const saveBtn  = $('save');
 const wrapBtn  = $('wrap');
 const fadeBtn  = $('fade');
 const makeBtn  = $('make');
@@ -147,14 +148,30 @@ const bundleCancel = $('bundleCancel');
 const bundleClose  = $('bundleClose');
 
 /* ---------- icon helpers ---------- */
-const ICON_PLAY  = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M6 4l12 8-12 8z"/></svg>';
-const ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+const ICON_BASE = `${import.meta.env.BASE_URL}svg-assets/`;
+const iconHref = name => `${ICON_BASE}${name}.svg#icon`;
+const ICON_PLAY  = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><use href="${iconHref('play')}"></use></svg>`;
+const ICON_PAUSE = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><use href="${iconHref('pause')}"></use></svg>`;
+const snapshotName = () => {
+  const fmtId = g => {
+    const id = g && g.id ? String(g.id) : 'custom';
+    return id.trim() ? id : 'custom';
+  };
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  return `${fmtId(S.genome1)} x ${fmtId(S.genome2)}_${yyyy}_${mm}_${dd}.jpg`;
+};
 const setWrapButtonState = isOn => {
   if (!wrapBtn) return;
   wrapBtn.dataset.state = isOn ? 'on' : 'off';
   wrapBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
   const sr = wrapBtn.querySelector('.sr-only');
   if (sr) sr.textContent = `Wrap edges ${isOn ? 'on' : 'off'}`;
+  if (canvas) {
+    canvas.classList.toggle('wrap-unbound', isOn);
+  }
 };
 
 const setRunButtonState = isRunning => {
@@ -306,6 +323,12 @@ clrBtn.onclick = () => {
 
 stepBtn.onclick = () => stepForward();
 stepBackBtn?.addEventListener('click', stepBackward);
+saveBtn?.addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = snapshotName();
+  link.href = canvas.toDataURL('image/jpeg', 0.92);
+  link.click();
+});
 
 let timer = null;
 runBtn.onclick  = () => {

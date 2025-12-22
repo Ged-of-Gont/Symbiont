@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon" viewBox="0 0 24 24">
+    <g transform="translate(12 11.4) scale(0.9) translate(-12 -12)">
+      <path d="M12 4L3 16h18L12 4z" fill="currentColor"/>
+      <path d="M2.84 19h18.32v3H2.84z" fill="currentColor"/>
+    </g>
+  </symbol>
+</svg>

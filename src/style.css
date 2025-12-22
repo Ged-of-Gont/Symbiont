@@ -23,6 +23,33 @@ h1 {
   text-align: center;
   margin-bottom: 2rem;
 }
+
+.title-mark {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1905.27 / 475.09;
+  display: block;
+  margin: 0 0 2rem 0;
+  isolation: isolate;
+}
+
+.title-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;
+}
+
+.title-soft {
+  color: var(--species1);
+}
+
+.title-hard {
+  color: var(--species2);
+  mix-blend-mode: screen;
+}
 body {
   margin: 0;
   background: var(--color-bg);
@@ -250,8 +277,8 @@ input[type="file"] {
   height: 2.97825em;
 }
 
-.species1-fill { fill: var(--species1); }
-.species2-fill { fill: var(--species2); }
+.species1-fill { fill: var(--species1); color: var(--species1); }
+.species2-fill { fill: var(--species2); color: var(--species2); }
 
 .die-pair {
   display: inline-flex;
@@ -265,7 +292,13 @@ input[type="file"] {
 .assign-icon {
   height: 3.2em;
   width: auto; /* keep the SVG’s native aspect ratio and relative proportions */
+  color: var(--color-fg);
+  --assign-square: var(--color-fg);
 }
+.assign-icon .assign-arrow { fill: var(--color-fg); }
+.assign-icon .assign-square { fill: var(--assign-square); }
+.assign-icon.species1-fill { --assign-square: var(--species1); }
+.assign-icon.species2-fill { --assign-square: var(--species2); }
 
 .wrap-icon {
   height: 3.2em;
@@ -475,7 +508,13 @@ canvas {
   aspect-ratio: 1 / 1;
   display: block;
   margin-bottom: var(--tight-gap);
-  border: 2px solid var(--color-line);
+  border: none;
+  outline: 5px solid var(--color-line);
+  outline-offset: 0;
+}
+
+canvas.wrap-unbound {
+  outline-color: transparent; /* keep sizing identical; just hide the stroke */
 }
 
 @media (max-width: 1100px) {
