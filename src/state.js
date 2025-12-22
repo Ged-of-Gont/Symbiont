@@ -37,11 +37,15 @@ export const state = {
 };
   
   /* (re)allocate arrays and compute cell size */
-  export function alloc(canvas) {
-    const { N } = state;
-    state.grid = Array.from({ length: N }, () => Array(N).fill(0));
-    state.next = Array.from({ length: N }, () => Array(N).fill(0));
-    state.fade = Array.from({ length: N }, () => Array(N).fill(0));
+export function alloc(canvas, cellSize) {
+  const { N } = state;
+  state.grid = Array.from({ length: N }, () => Array(N).fill(0));
+  state.next = Array.from({ length: N }, () => Array(N).fill(0));
+  state.fade = Array.from({ length: N }, () => Array(N).fill(0));
+  if (Number.isFinite(cellSize)) {
+    state.cell = cellSize;
+  } else if (canvas) {
     state.cell = canvas.width / N;
   }
+}
   

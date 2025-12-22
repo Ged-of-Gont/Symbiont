@@ -12,6 +12,23 @@ import {
 const $ = id => document.getElementById(id);
 const canvas = $('c');
 const ctx    = canvas.getContext('2d');
+let canvasDpr = window.devicePixelRatio || 1;
+
+const syncCanvasSize = () => {
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  const cssSize = rect.width || rect.height;
+  if (!cssSize) return;
+  const displaySize = Math.max(1, Math.round(cssSize * dpr));
+  if (canvas.width !== displaySize || canvas.height !== displaySize) {
+    canvas.width = displaySize;
+    canvas.height = displaySize;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  S.cell = cssSize / S.N;
+  canvasDpr = dpr;
+};
 
 /* ------- colour helper ------- */
 const css = getComputedStyle(document.documentElement);
@@ -25,8 +42,11 @@ const hexToRgba = (hex, a) =>
 
 /* ------- draw grid & cells ------- */
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   const { N, cell, grid, fade, fadeMode } = S;
+  const size = cell * N;
+  const dpr = canvasDpr || 1;
+  const align = value => Math.round(value * dpr) / dpr;
+  ctx.clearRect(0, 0, size, size);
 
   for (let r = 0; r < N; r++)
     for (let c = 0; c < N; c++) {
@@ -42,19 +62,19 @@ function draw() {
   ctx.strokeStyle = '#444';
   const mid = Math.floor(N / 2);
   for (let i = 0; i <= N; i++) {
-    const p = i * S.cell;
-    ctx.lineWidth = i === mid ? 3 : 1;
+    const p = align(i * cell);
+    ctx.lineWidth = i === mid ? 3 / dpr : 1 / dpr;
     ctx.beginPath();
     ctx.moveTo(0, p);
-    ctx.lineTo(canvas.width, p);
+    ctx.lineTo(size, p);
     ctx.stroke();
 
     ctx.beginPath();
     ctx.moveTo(p, 0);
-    ctx.lineTo(p, canvas.height);
+    ctx.lineTo(p, size);
     ctx.stroke();
   }
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 1 / dpr;
 }
 
 /* ------- animate fade ------- */
@@ -88,8 +108,8 @@ function getCellFromEvent(e) {
   const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
   const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
   return [
-    Math.floor((y * canvas.height) / rect.height / S.cell),
-    Math.floor((x * canvas.width)  / rect.width  / S.cell)
+    Math.floor(y / S.cell),
+    Math.floor(x / S.cell)
   ];
 }
 
@@ -146,6 +166,8 @@ const bundleSelect = $('bundleSelect');
 const bundleLoad   = $('bundleLoad');
 const bundleCancel = $('bundleCancel');
 const bundleClose  = $('bundleClose');
+const speciesRows  = document.querySelectorAll('.species-row');
+const fadeHome = fadeBtn ? { parent: fadeBtn.parentNode, next: fadeBtn.nextSibling } : null;
 
 /* ---------- icon helpers ---------- */
 const ICON_BASE = `${import.meta.env.BASE_URL}svg-assets/`;
@@ -180,6 +202,51 @@ const setRunButtonState = isRunning => {
   runBtn.setAttribute('aria-label', isRunning ? 'Pause simulation' : 'Start simulation');
   runBtn.innerHTML = `${isRunning ? ICON_PAUSE : ICON_PLAY}`;
 };
+
+const isMobileViewport = () => window.matchMedia('(max-width: 480px)').matches;
+const updateGenomeListSize = () => {
+  if (!genomeList) return;
+  genomeList.size = isMobileViewport() ? 5 : 8;
+};
+
+const positionFadeButton = () => {
+  if (!fadeBtn || !fadeHome) return;
+  if (isMobileViewport()) {
+    const sprinkleRow = randBoth?.closest('.control-row');
+    if (sprinkleRow && fadeBtn.parentNode !== sprinkleRow) {
+      sprinkleRow.insertBefore(fadeBtn, randBoth?.nextSibling);
+    }
+  } else if (fadeBtn.parentNode !== fadeHome.parent) {
+    fadeHome.parent.insertBefore(fadeBtn, fadeHome.next);
+  }
+};
+
+const DEFAULT_GRID_SIZE_DESKTOP = 40;
+const DEFAULT_GRID_SIZE_MOBILE = 16;
+const updateSizeInputForMobile = () => {
+  if (!sizeInput || sizeInput.dataset.userSet === 'true') return;
+  const next = isMobileViewport() ? DEFAULT_GRID_SIZE_MOBILE : DEFAULT_GRID_SIZE_DESKTOP;
+  sizeInput.value = String(next);
+  sizeInput.setAttribute('value', String(next));
+};
+
+const setSpeciesRowOpen = (row, isOpen) => {
+  row.classList.toggle('is-open', isOpen);
+  const toggle = row.querySelector('.species-toggle');
+  if (toggle) {
+    const expanded = isMobileViewport() ? isOpen : true;
+    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  }
+};
+
+speciesRows.forEach(row => {
+  setSpeciesRowOpen(row, false);
+  const toggle = row.querySelector('.species-toggle');
+  toggle?.addEventListener('click', () => {
+    if (!isMobileViewport()) return;
+    setSpeciesRowOpen(row, !row.classList.contains('is-open'));
+  });
+});
 
 /* ---------- history for stepping backward ---------- */
 const HISTORY_LIMIT = 500;
@@ -376,8 +443,8 @@ makeBtn.onclick = () => {
   if (!S.genome1) setManualRulesForSpecies(1);
   if (!S.genome2) setManualRulesForSpecies(2);
   S.N = Math.max(5, +$('size').value || 50);
-  canvas.height = canvas.width;
-  alloc(canvas);
+  syncCanvasSize();
+  alloc(canvas, S.cell);
   draw();
 };
 
@@ -562,11 +629,18 @@ clearGBtn?.addEventListener('click', () => {
 /* ---------- initial boot ---------- */
 // apply size input to state before alloc
 const sizeInput = document.getElementById('size');
+sizeInput?.addEventListener('input', () => {
+  sizeInput.dataset.userSet = 'true';
+});
+updateSizeInputForMobile();
 if (sizeInput) {
   const n = Math.max(5, +sizeInput.value || S.N);
   S.N = n;
 }
-alloc(canvas);
+updateGenomeListSize();
+positionFadeButton();
+syncCanvasSize();
+alloc(canvas, S.cell);
 history.length = 0;
 setRunButtonState(false);
 setWrapButtonState(S.wrapEdges);
@@ -574,6 +648,17 @@ setManualRulesForSpecies(1);
 setManualRulesForSpecies(2);
 draw();
 requestAnimationFrame(animate);
+
+window.addEventListener('resize', () => {
+  syncCanvasSize();
+  updateGenomeListSize();
+  positionFadeButton();
+  updateSizeInputForMobile();
+  if (!isMobileViewport()) {
+    speciesRows.forEach(row => setSpeciesRowOpen(row, false));
+  }
+  draw();
+});
 
 /* ---------- expose genome loader helpers for console/UI hooks ---------- */
 window.symbiont = {

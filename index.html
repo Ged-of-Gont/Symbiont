@@ -26,232 +26,237 @@
         </svg>
       </h1>
 
-      <div class="control-panel">
-        <div class="genome-grid">
+      <div class="control-panels">
+
+        <div class="control-panel">
+          <div class="genome-grid">
           
-          <button id="browseBtn" type="button" aria-label="Load genomes" style="grid-column:1; grid-row:1;">
-            <svg class="player-icon" viewBox="0 0 440 384" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <use href="%BASE_URL%svg-assets/load.svg#icon"></use>
-            </svg>
-          </button>
+            <button id="browseBtn" type="button" aria-label="Load genomes" style="grid-column:1; grid-row:1;">
+              <svg class="player-icon" viewBox="0 0 440 384" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <use href="%BASE_URL%svg-assets/load.svg#icon"></use>
+              </svg>
+            </button>
 
-          <button id="clearGenomes" aria-label="Eject genomes" style="grid-column:1; grid-row:2;">
-            <svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <use href="%BASE_URL%svg-assets/eject.svg#icon"></use>
-            </svg>
-          </button>
+            <button id="clearGenomes" aria-label="Eject genomes" style="grid-column:1; grid-row:2;">
+              <svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <use href="%BASE_URL%svg-assets/eject.svg#icon"></use>
+              </svg>
+            </button>
 
-          <div class="control-unit genome-list" style="grid-column:2 / span 3; grid-row:1 / span 2;">
-            <div id="genomeStatus" role="status" aria-live="polite">No genomes loaded</div>
-            <label class="sr-only" for="genomeList">Loaded genomes</label>
-            <select id="genomeList" size="8"></select>
-          </div>
+            <div class="control-unit genome-list" style="grid-column:2 / span 3; grid-row:1 / span 2;">
+              <div id="genomeStatus" role="status" aria-live="polite">No genomes loaded</div>
+              <label class="sr-only" for="genomeList">Loaded genomes</label>
+              <select id="genomeList" size="8"></select>
+            </div>
 
-          <button id="assignG1" aria-label="Set as Species 1" style="grid-column:5; grid-row:1;">
-            <svg class="player-icon assign-icon species1-fill" viewBox="0 0 296.65 166.22" aria-hidden="true"
-              focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
-            </svg>
+            <button id="assignG1" aria-label="Set as Species 1" style="grid-column:5; grid-row:1;">
+              <svg class="player-icon assign-icon species1-fill" viewBox="0 0 296.65 166.22" aria-hidden="true"
+                focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
+              </svg>
 
-          </button>
+            </button>
 
-          <button id="assignG2" aria-label="Set as Species 2" style="grid-column:5; grid-row:2;">
-            <svg class="player-icon assign-icon species2-fill" viewBox="0 0 296.65 166.22" aria-hidden="true"
-              focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
-            </svg>
+            <button id="assignG2" aria-label="Set as Species 2" style="grid-column:5; grid-row:2;">
+              <svg class="player-icon assign-icon species2-fill" viewBox="0 0 296.65 166.22" aria-hidden="true"
+                focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
+              </svg>
 
-          </button>
-        </div>
-      </div>
-
-      <div class="control-panel">
-        <div class="control-row tight-row">
-          <div class="species-label" style="color: var(--species1);">
-            <h3 id="labelS1">SPECIES<br> 1:</h3>
-          </div>
-
-          <div class="control-unit">
-            <label for="b1"><span class="color-square species1"></span>BIRTH</label>
-            <input id="b1" type="text">
-          </div>
-
-          <div class="control-unit">
-            <label for="y1b"><span class="color-square species2"></span>BIRTH</label>
-            <input id="y1b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
-          </div>
-
-          <div class="control-unit">
-            <label for="s1"><span class="color-square species1"></span>SURVIVE</label>
-            <input id="s1" type="text">
-          </div>
-
-
-          <div class="control-unit">
-            <label for="y1s"><span class="color-square species2"></span>SURVIVE</label>
-            <input id="y1s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+            </button>
           </div>
         </div>
-      </div>
 
-      <div class="control-panel">
-        <div class="control-row tight-row">
-          <div class="species-label" style="color: var(--species2);">
-            <h3 id="labelS2">SPECIES<br> 2:</h3>
-          </div>
+        <div class="control-panel">
+          <div class="control-row tight-row species-row" data-species="1">
+            <button class="species-label species-toggle" type="button" aria-expanded="false" aria-controls="species1-editors" style="color: var(--species1);">
+              <h3 id="labelS1">SPECIES<br> 1:</h3>
+            </button>
 
-          <div class="control-unit">
-            <label for="b2"><span class="color-square species2"></span>BIRTH</label>
-            <input id="b2" type="text">
-          </div>
+            <div class="species-editors" id="species1-editors">
+              <div class="control-unit">
+                <label for="b1"><span class="color-square species1"></span>BIRTH</label>
+                <input id="b1" type="text">
+              </div>
 
-          <div class="control-unit">
-            <label for="y2b"><span class="color-square species1"></span>BIRTH</label>
-            <input id="y2b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
-          </div>
+              <div class="control-unit">
+                <label for="y1b"><span class="color-square species2"></span>BIRTH</label>
+                <input id="y1b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+              </div>
 
-          <div class="control-unit">
-            <label for="s2"><span class="color-square species2"></span>SURVIVE</label>
-            <input id="s2" type="text">
-          </div>
+              <div class="control-unit">
+                <label for="s1"><span class="color-square species1"></span>SURVIVE</label>
+                <input id="s1" type="text">
+              </div>
 
-
-          <div class="control-unit">
-            <label for="y2s"><span class="color-square species1"></span>SURVIVE</label>
-            <input id="y2s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+              <div class="control-unit">
+                <label for="y1s"><span class="color-square species2"></span>SURVIVE</label>
+                <input id="y1s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="control-panel">
+        <div class="control-panel">
+          <div class="control-row tight-row species-row" data-species="2">
+            <button class="species-label species-toggle" type="button" aria-expanded="false" aria-controls="species2-editors" style="color: var(--species2);">
+              <h3 id="labelS2">SPECIES<br> 2:</h3>
+            </button>
 
-        <div class="control-row tight-row">
-          <div class="control-unit">
-            <label for="size">Grid&nbsp;Size</label>
-            <input id="size" type="number" min="5" value="40">
+            <div class="species-editors" id="species2-editors">
+              <div class="control-unit">
+                <label for="b2"><span class="color-square species2"></span>BIRTH</label>
+                <input id="b2" type="text">
+              </div>
+
+              <div class="control-unit">
+                <label for="y2b"><span class="color-square species1"></span>BIRTH</label>
+                <input id="y2b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+              </div>
+
+              <div class="control-unit">
+                <label for="s2"><span class="color-square species2"></span>SURVIVE</label>
+                <input id="s2" type="text">
+              </div>
+
+              <div class="control-unit">
+                <label for="y2s"><span class="color-square species1"></span>SURVIVE</label>
+                <input id="y2s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
+              </div>
+            </div>
           </div>
+        </div>
 
-          <button id="make" aria-label="Restart world">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-              <use href="%BASE_URL%svg-assets/restart.svg#icon"></use>
-            </svg>
-          </button>
+        <div class="control-panel">
 
-          <div class="control-unit">
-            <label for="tie">When tied:</label>
-            <select id="tie">
-              <option value="none">leave empty</option>
-              <option value="s1">species 1 wins</option>
-              <option value="s2">species 2 wins</option>
-              <option value="rand">random</option>
-            </select>
-          </div>
+          <div class="control-row tight-row">
+            <div class="control-unit">
+              <label for="size">Grid&nbsp;Size</label>
+              <input id="size" type="number" min="5" value="40">
+            </div>
 
-          <button id="wrap" aria-label="Wrap edges on" aria-pressed="true" data-state="on">
-            <svg class="wrap-icon wrap-on" viewBox="0 0 989.31 818.93" aria-hidden="true" focusable="false"
-              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <use href="%BASE_URL%svg-assets/wrap-on.svg#icon"></use>
-            </svg>
+            <button id="make" aria-label="Restart world">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+                <use href="%BASE_URL%svg-assets/restart.svg#icon"></use>
+              </svg>
+            </button>
 
-            <svg class="wrap-icon wrap-off" viewBox="0 0 191.49 197.11" aria-hidden="true" focusable="false"
-              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <use href="%BASE_URL%svg-assets/wrap-off.svg#icon"></use>
-            </svg>
+            <div class="control-unit">
+              <label for="tie">When tied:</label>
+              <select id="tie">
+                <option value="none">leave empty</option>
+                <option value="s1">species 1 wins</option>
+                <option value="s2">species 2 wins</option>
+                <option value="rand">random</option>
+              </select>
+            </div>
 
-          </button>
+            <button id="wrap" aria-label="Wrap edges on" aria-pressed="true" data-state="on">
+              <svg class="wrap-icon wrap-on" viewBox="0 0 989.31 818.93" aria-hidden="true" focusable="false"
+                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <use href="%BASE_URL%svg-assets/wrap-on.svg#icon"></use>
+              </svg>
 
-          <button id="fade" aria-pressed="false" data-tooltip="Fade: Off">Fade: Off</button>
+              <svg class="wrap-icon wrap-off" viewBox="0 0 191.49 197.11" aria-hidden="true" focusable="false"
+                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <use href="%BASE_URL%svg-assets/wrap-off.svg#icon"></use>
+              </svg>
+
+            </button>
+
+            <button id="fade" aria-pressed="false" data-tooltip="Fade: Off">Fade: Off</button>
           
           
        
+          </div>
         </div>
-      </div>
 
-      <div class="control-panel">
-        <div class="control-row tight-row">
-          <button id="rand1" aria-label="Sprinkle species 1">
-            <svg class="die-icon species1-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
-              <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
-            </svg>
-
-          </button>
-
-          <button id="rand2" aria-label="Sprinkle species 2">
-            <svg class="die-icon species2-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
-              <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
-            </svg>
-
-          </button>
-
-          <button id="randBoth" aria-label="Sprinkle both species">
-            <span class="die-pair">
+        <div class="control-panel">
+          <div class="control-row tight-row">
+            <button id="rand1" aria-label="Sprinkle species 1">
               <svg class="die-icon species1-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
                 <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
               </svg>
 
+            </button>
+
+            <button id="rand2" aria-label="Sprinkle species 2">
               <svg class="die-icon species2-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
                 <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
               </svg>
-            </span>
 
-          </button>
+            </button>
 
-          <div class="control-unit span-2 speed-control">
-            <label class="sr-only" for="speed">Speed</label>
-            <svg class="speed-icon" viewBox="0 0 820 700" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <use href="%BASE_URL%svg-assets/speed-slow.svg#icon"></use>
-            </svg>
+            <button id="randBoth" aria-label="Sprinkle both species">
+              <span class="die-pair">
+                <svg class="die-icon species1-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
+                  <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
+                </svg>
 
-            <div class="speed-slider">
-              <input id="speed" type="range" min="0" max="100" step="1">
-            </div>
-            
-              <svg class="speed-icon" viewBox="0 0 820 700" aria-hidden="true" focusable="false" fill="currentColor">
-                <use href="%BASE_URL%svg-assets/speed-fast.svg#icon"></use>
+                <svg class="die-icon species2-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
+                  <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
+                </svg>
+              </span>
+
+            </button>
+
+            <div class="control-unit span-2 speed-control">
+              <label class="sr-only" for="speed">Speed</label>
+              <svg class="speed-icon" viewBox="0 0 820 700" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <use href="%BASE_URL%svg-assets/speed-slow.svg#icon"></use>
               </svg>
+
+              <div class="speed-slider">
+                <input id="speed" type="range" min="0" max="100" step="1">
+              </div>
+            
+                <svg class="speed-icon" viewBox="0 0 820 700" aria-hidden="true" focusable="false" fill="currentColor">
+                  <use href="%BASE_URL%svg-assets/speed-fast.svg#icon"></use>
+                </svg>
+            </div>
           </div>
+
         </div>
 
-      </div>
+        <div class="control-panel player-controls-panel">
+          <div class="control-row tight-row seven-cols">
+            <button id="clear" aria-label="Clear grid">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+                <use href="%BASE_URL%svg-assets/stop.svg#icon"></use>
+              </svg>
 
-      <div class="control-panel">
-        <div class="control-row tight-row seven-cols">
-          <button id="clear" aria-label="Clear grid">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-              <use href="%BASE_URL%svg-assets/stop.svg#icon"></use>
-            </svg>
+            </button>
 
-          </button>
+            <button id="stepBack" aria-label="Step backward">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+                <use href="%BASE_URL%svg-assets/step-back.svg#icon"></use>
+              </svg>
 
-          <button id="stepBack" aria-label="Step backward">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-              <use href="%BASE_URL%svg-assets/step-back.svg#icon"></use>
-            </svg>
+            </button>
 
-          </button>
+            <button id="run" aria-label="Start simulation" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+                <use href="%BASE_URL%svg-assets/play.svg#icon"></use>
+              </svg>
 
-          <button id="run" aria-label="Start simulation" aria-pressed="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-              <use href="%BASE_URL%svg-assets/play.svg#icon"></use>
-            </svg>
+            </button>
 
-          </button>
+            <button id="step" aria-label="Step forward">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+                <use href="%BASE_URL%svg-assets/step-forward.svg#icon"></use>
+              </svg>
 
-          <button id="step" aria-label="Step forward">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-              <use href="%BASE_URL%svg-assets/step-forward.svg#icon"></use>
-            </svg>
+            </button>
 
-          </button>
+            <button id="save" aria-label="Save snapshot">
+              <svg viewBox="0 0 56 56" aria-hidden="true" focusable="false" fill="currentColor">
+                <use href="%BASE_URL%svg-assets/save.svg#icon"></use>
+              </svg>
 
-          <button id="save" aria-label="Save snapshot">
-            <svg viewBox="0 0 56 56" aria-hidden="true" focusable="false" fill="currentColor">
-              <use href="%BASE_URL%svg-assets/save.svg#icon"></use>
-            </svg>
+            </button>
 
-          </button>
-
-          <div class="spacer"></div>
+            <div class="spacer"></div>
+          </div>
         </div>
       </div>
     </div>
