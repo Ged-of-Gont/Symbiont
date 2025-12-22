@@ -1,7 +1,7 @@
 :root {
   --color-bg: #1d0513;
   --input-color: #321b5c;
-  --color-fg: #d05bed;
+  --color-fg: #e168ff;
   --color-line: #f9ee5c;
   --color-accent: #edebd4;
   --species2: #17e197;
@@ -356,6 +356,7 @@ input[type="file"] {
   justify-content: center;
   align-items: center;
   height: 100%;
+  text-transform: uppercase;
 }
 
 .genome-grid {
@@ -474,6 +475,8 @@ button {
   width: 100%;
   height: 100%;
   min-height: 90px;
+  position: relative;
+  overflow: visible;
   border-top: 5px solid var(--color-fg);
   border-left: 5px solid var(--color-fg);
   border-bottom: 5px solid var(--color-line);
@@ -494,6 +497,41 @@ button:active {
   border-bottom: 6px solid var(--color-fg);
   border-right: 6px solid var(--color-fg);
   transform: translateY(2px);
+}
+
+button:is([aria-label],[data-tooltip])::after {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.6rem);
+  transform: translate(-50%, 6px);
+  background: var(--color-line);
+  color: var(--input-color);
+  border: 2px solid var(--color-fg);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  transition-delay: 0s;
+}
+
+button[aria-label]::after {
+  content: attr(aria-label);
+}
+
+button[data-tooltip]::after {
+  content: attr(data-tooltip);
+}
+
+button:is([aria-label],[data-tooltip]):hover::after,
+button:is([aria-label],[data-tooltip]):focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition-delay: 1s;
 }
 
 button svg {

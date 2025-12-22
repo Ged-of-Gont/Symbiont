@@ -167,8 +167,7 @@ const setWrapButtonState = isOn => {
   if (!wrapBtn) return;
   wrapBtn.dataset.state = isOn ? 'on' : 'off';
   wrapBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
-  const sr = wrapBtn.querySelector('.sr-only');
-  if (sr) sr.textContent = `Wrap edges ${isOn ? 'on' : 'off'}`;
+  wrapBtn.setAttribute('aria-label', `Wrap edges ${isOn ? 'on' : 'off'}`);
   if (canvas) {
     canvas.classList.toggle('wrap-unbound', isOn);
   }
@@ -178,7 +177,8 @@ const setRunButtonState = isRunning => {
   if (!runBtn) return;
   runBtn.dataset.state = isRunning ? 'running' : 'stopped';
   runBtn.setAttribute('aria-pressed', isRunning ? 'true' : 'false');
-  runBtn.innerHTML = `${isRunning ? ICON_PAUSE : ICON_PLAY}<span class="sr-only">${isRunning ? 'Pause simulation' : 'Start simulation'}</span>`;
+  runBtn.setAttribute('aria-label', isRunning ? 'Pause simulation' : 'Start simulation');
+  runBtn.innerHTML = `${isRunning ? ICON_PAUSE : ICON_PLAY}`;
 };
 
 /* ---------- history for stepping backward ---------- */
@@ -349,7 +349,10 @@ wrapBtn.onclick = () => {
 
 fadeBtn.onclick = () => {
   S.fadeMode = !S.fadeMode;
-  fadeBtn.textContent = `Fade: ${S.fadeMode ? 'On' : 'Off'}`;
+  const fadeLabel = `Fade: ${S.fadeMode ? 'On' : 'Off'}`;
+  fadeBtn.textContent = fadeLabel;
+  fadeBtn.setAttribute('data-tooltip', fadeLabel);
+  fadeBtn.setAttribute('aria-pressed', S.fadeMode ? 'true' : 'false');
   draw();
 };
 

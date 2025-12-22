@@ -4,40 +4,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Symbiont v0.2</title>
+  <title>Symbiont v0.3</title>
   <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
   <div class="app-shell">
+
     <div class="control-stack">
+
       <h1 class="title-mark">
-        <span class="sr-only">Symbiont v0.2</span>
+        <span class="sr-only">Symbiont Version 0.3</span>
+        
         <svg class="title-svg title-soft" viewBox="0 0 1905.27 475.09" aria-hidden="true" focusable="false">
           <use href="%BASE_URL%svg-assets/symtitdoft.svg#icon"></use>
         </svg>
+
         <svg class="title-svg title-hard" viewBox="0 0 1905.27 475.09" aria-hidden="true" focusable="false">
           <use href="%BASE_URL%svg-assets/symtithard.svg#icon"></use>
         </svg>
       </h1>
+
       <div class="control-panel">
         <div class="genome-grid">
+          
           <button id="browseBtn" type="button" aria-label="Load genomes" style="grid-column:1; grid-row:1;">
             <svg class="player-icon" viewBox="0 0 440 384" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <use href="%BASE_URL%svg-assets/load.svg#icon"></use>
             </svg>
-            <span class="sr-only">Load genomes</span>
           </button>
+
           <button id="clearGenomes" aria-label="Eject genomes" style="grid-column:1; grid-row:2;">
             <svg class="player-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <use href="%BASE_URL%svg-assets/eject.svg#icon"></use>
             </svg>
-            <span class="sr-only">Clear genomes</span>
           </button>
 
           <div class="control-unit genome-list" style="grid-column:2 / span 3; grid-row:1 / span 2;">
-            <div id="genomeStatus">No genomes loaded</div>
+            <div id="genomeStatus" role="status" aria-live="polite">No genomes loaded</div>
+            <label class="sr-only" for="genomeList">Loaded genomes</label>
             <select id="genomeList" size="8"></select>
           </div>
 
@@ -46,14 +52,15 @@
               focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
             </svg>
-            <span class="sr-only">Set as Species 1</span>
+
           </button>
+
           <button id="assignG2" aria-label="Set as Species 2" style="grid-column:5; grid-row:2;">
             <svg class="player-icon assign-icon species2-fill" viewBox="0 0 296.65 166.22" aria-hidden="true"
               focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
             </svg>
-            <span class="sr-only">Set as Species 2</span>
+
           </button>
         </div>
       </div>
@@ -65,22 +72,23 @@
           </div>
 
           <div class="control-unit">
-            <label for="b1">#&nbsp;<span class="color-square species1"></span>spawn</label>
+            <label for="b1"><span class="color-square species1"></span>BIRTH</label>
             <input id="b1" type="text">
           </div>
+
           <div class="control-unit">
-            <label for="y1b">#&nbsp;<span class="color-square species2"></span>spawn</label>
+            <label for="y1b"><span class="color-square species2"></span>BIRTH</label>
             <input id="y1b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
           </div>
 
           <div class="control-unit">
-            <label for="s1">#&nbsp;<span class="color-square species1"></span>survive</label>
+            <label for="s1"><span class="color-square species1"></span>SURVIVE</label>
             <input id="s1" type="text">
           </div>
 
 
           <div class="control-unit">
-            <label for="y1s">#&nbsp;<span class="color-square species2"></span>survive</label>
+            <label for="y1s"><span class="color-square species2"></span>SURVIVE</label>
             <input id="y1s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
           </div>
         </div>
@@ -93,35 +101,44 @@
           </div>
 
           <div class="control-unit">
-            <label for="b2">#&nbsp;<span class="color-square species2"></span>spawn</label>
+            <label for="b2"><span class="color-square species2"></span>BIRTH</label>
             <input id="b2" type="text">
           </div>
+
           <div class="control-unit">
-            <label for="y2b">#&nbsp;<span class="color-square species1"></span>spawn</label>
+            <label for="y2b"><span class="color-square species1"></span>BIRTH</label>
             <input id="y2b" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
           </div>
 
           <div class="control-unit">
-            <label for="s2">#&nbsp;<span class="color-square species2"></span>survive</label>
+            <label for="s2"><span class="color-square species2"></span>SURVIVE</label>
             <input id="s2" type="text">
           </div>
 
 
           <div class="control-unit">
-            <label for="y2s">#&nbsp;<span class="color-square species1"></span>survive</label>
+            <label for="y2s"><span class="color-square species1"></span>SURVIVE</label>
             <input id="y2s" type="text" inputmode="text" title="Opposite-species counts (other-only/any)">
           </div>
         </div>
       </div>
 
       <div class="control-panel">
+
         <div class="control-row tight-row">
           <div class="control-unit">
-            <label>Grid&nbsp;Size</label>
+            <label for="size">Grid&nbsp;Size</label>
             <input id="size" type="number" min="5" value="40">
           </div>
+
+          <button id="make" aria-label="Restart world">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+              <use href="%BASE_URL%svg-assets/restart.svg#icon"></use>
+            </svg>
+          </button>
+
           <div class="control-unit">
-            <label>When tied:</label>
+            <label for="tie">When tied:</label>
             <select id="tie">
               <option value="none">leave empty</option>
               <option value="s1">species 1 wins</option>
@@ -129,24 +146,24 @@
               <option value="rand">random</option>
             </select>
           </div>
-          <button id="wrap" aria-pressed="true" data-state="on">
+
+          <button id="wrap" aria-label="Wrap edges on" aria-pressed="true" data-state="on">
             <svg class="wrap-icon wrap-on" viewBox="0 0 989.31 818.93" aria-hidden="true" focusable="false"
               fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <use href="%BASE_URL%svg-assets/wrap-on.svg#icon"></use>
             </svg>
+
             <svg class="wrap-icon wrap-off" viewBox="0 0 191.49 197.11" aria-hidden="true" focusable="false"
               fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <use href="%BASE_URL%svg-assets/wrap-off.svg#icon"></use>
             </svg>
-            <span class="sr-only">Wrap edges on</span>
+
           </button>
-          <button id="fade">Fade: Off</button>
-          <button id="make" aria-label="Restart world">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-              <use href="%BASE_URL%svg-assets/restart.svg#icon"></use>
-            </svg>
-            <span class="sr-only">Restart world</span>
-          </button>
+
+          <button id="fade" aria-pressed="false" data-tooltip="Fade: Off">Fade: Off</button>
+          
+          
+       
         </div>
       </div>
 
@@ -156,30 +173,35 @@
             <svg class="die-icon species1-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
               <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
             </svg>
-            <span class="sr-only">Sprinkle species 1</span>
+
           </button>
+
           <button id="rand2" aria-label="Sprinkle species 2">
             <svg class="die-icon species2-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
               <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
             </svg>
-            <span class="sr-only">Sprinkle species 2</span>
+
           </button>
+
           <button id="randBoth" aria-label="Sprinkle both species">
             <span class="die-pair">
               <svg class="die-icon species1-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
                 <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
               </svg>
+
               <svg class="die-icon species2-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
                 <use href="%BASE_URL%svg-assets/die.svg#icon"></use>
               </svg>
             </span>
-            <span class="sr-only">Sprinkle both species</span>
+
           </button>
+
           <div class="control-unit span-2 speed-control">
             <label class="sr-only" for="speed">Speed</label>
             <svg class="speed-icon" viewBox="0 0 820 700" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <use href="%BASE_URL%svg-assets/speed-slow.svg#icon"></use>
             </svg>
+
             <div class="speed-slider">
               <input id="speed" type="range" min="0" max="100" step="1">
             </div>
@@ -198,32 +220,37 @@
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
               <use href="%BASE_URL%svg-assets/stop.svg#icon"></use>
             </svg>
-            <span class="sr-only">Clear grid</span>
+
           </button>
+
           <button id="stepBack" aria-label="Step backward">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
               <use href="%BASE_URL%svg-assets/step-back.svg#icon"></use>
             </svg>
-            <span class="sr-only">Step backward</span>
+
           </button>
-          <button id="run" aria-pressed="false">
+
+          <button id="run" aria-label="Start simulation" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
               <use href="%BASE_URL%svg-assets/play.svg#icon"></use>
             </svg>
-            <span class="sr-only">Start</span>
+
           </button>
+
           <button id="step" aria-label="Step forward">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
               <use href="%BASE_URL%svg-assets/step-forward.svg#icon"></use>
             </svg>
-            <span class="sr-only">Step forward</span>
+
           </button>
+
           <button id="save" aria-label="Save snapshot">
             <svg viewBox="0 0 56 56" aria-hidden="true" focusable="false" fill="currentColor">
               <use href="%BASE_URL%svg-assets/save.svg#icon"></use>
             </svg>
-            <span class="sr-only">Save snapshot</span>
+
           </button>
+
           <div class="spacer"></div>
         </div>
       </div>
@@ -235,19 +262,21 @@
   </div>
 
   <!-- Bundled genome picker (hidden until opened) -->
-  <div id="bundleModal" class="modal hidden">
+  <div id="bundleModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="bundleTitle">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Select bundled genome file</h3>
+        <h3 id="bundleTitle">Select bundled genome file</h3>
         <button id="bundleClose" aria-label="Close bundled genome picker">×</button>
       </div>
+
       <div class="modal-body">
         <label for="bundleSelect">Available bundles:</label>
         <select id="bundleSelect"></select>
       </div>
+
       <div class="modal-footer">
-        <button id="bundleCancel" type="button">Cancel</button>
-        <button id="bundleLoad" type="button">Load</button>
+        <button id="bundleCancel" type="button" data-tooltip="Cancel">Cancel</button>
+        <button id="bundleLoad" type="button" data-tooltip="Load bundled genomes">Load</button>
       </div>
     </div>
   </div>
