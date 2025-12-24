@@ -167,11 +167,21 @@ const bundleLoad   = $('bundleLoad');
 const bundleCancel = $('bundleCancel');
 const bundleClose  = $('bundleClose');
 const speciesRows  = document.querySelectorAll('.species-row');
+const speciesRow1 = document.querySelector('.species-row[data-species="1"]');
+const speciesRow2 = document.querySelector('.species-row[data-species="2"]');
 const fadeHome = fadeBtn ? { parent: fadeBtn.parentNode, next: fadeBtn.nextSibling } : null;
+const assignG1Home = assignG1Btn ? { parent: assignG1Btn.parentNode, next: assignG1Btn.nextSibling } : null;
+const assignG2Home = assignG2Btn ? { parent: assignG2Btn.parentNode, next: assignG2Btn.nextSibling } : null;
+const speedControl = speedInp?.closest('.speed-control');
+const speedHome = speedControl ? { parent: speedControl.parentNode, next: speedControl.nextSibling } : null;
+const speedPanel = document.querySelector('.speed-panel');
+const speedPanelRow = document.getElementById('speedPanelRow');
 
 /* ---------- icon helpers ---------- */
 const ICON_BASE = `${import.meta.env.BASE_URL}svg-assets/`;
 const iconHref = name => `${ICON_BASE}${name}.svg#icon`;
+const ASSIGN_ICON_DESKTOP = `${ICON_BASE}assign.svg#icon`;
+const ASSIGN_ICON_MOBILE = `${ICON_BASE}${encodeURIComponent('mobile assign.svg')}#icon`;
 const ICON_PLAY  = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><use href="${iconHref('play')}"></use></svg>`;
 const ICON_PAUSE = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><use href="${iconHref('pause')}"></use></svg>`;
 const snapshotName = () => {
@@ -203,10 +213,18 @@ const setRunButtonState = isRunning => {
   runBtn.innerHTML = `${isRunning ? ICON_PAUSE : ICON_PLAY}`;
 };
 
-const isMobileViewport = () => window.matchMedia('(max-width: 480px)').matches;
+const setFadeButtonState = isOn => {
+  if (!fadeBtn) return;
+  const fadeLabel = `Fade: ${isOn ? 'On' : 'Off'}`;
+  fadeBtn.textContent = fadeLabel;
+  fadeBtn.setAttribute('data-tooltip', fadeLabel);
+  fadeBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+};
+
+const isMobileViewport = () => window.matchMedia('(max-width: 768px)').matches;
 const updateGenomeListSize = () => {
   if (!genomeList) return;
-  genomeList.size = isMobileViewport() ? 5 : 8;
+  genomeList.size = isMobileViewport() ? 1 : 8;
 };
 
 const positionFadeButton = () => {
@@ -219,6 +237,74 @@ const positionFadeButton = () => {
   } else if (fadeBtn.parentNode !== fadeHome.parent) {
     fadeHome.parent.insertBefore(fadeBtn, fadeHome.next);
   }
+};
+
+const positionSpeedControl = () => {
+  if (!speedControl || !speedHome) return;
+  if (!isMobileViewport()) {
+    if (speedControl.parentNode !== speedHome.parent) {
+      speedHome.parent.insertBefore(speedControl, speedHome.next);
+    }
+    speedPanel?.classList.remove('is-active');
+    return;
+  }
+  if (!speedPanelRow) return;
+  if (speedControl.parentNode !== speedPanelRow) {
+    speedPanelRow.appendChild(speedControl);
+  }
+  speedPanel?.classList.add('is-active');
+};
+
+const positionAssignButtons = () => {
+  if (!assignG1Btn || !assignG2Btn || !assignG1Home || !assignG2Home) return;
+  if (isMobileViewport()) {
+    if (speciesRow1 && assignG1Btn.parentNode !== speciesRow1) {
+      const toggle1 = speciesRow1.querySelector('.species-toggle');
+      if (toggle1) speciesRow1.insertBefore(assignG1Btn, toggle1);
+      else speciesRow1.insertBefore(assignG1Btn, speciesRow1.firstChild);
+    }
+    if (speciesRow2 && assignG2Btn.parentNode !== speciesRow2) {
+      const toggle2 = speciesRow2.querySelector('.species-toggle');
+      if (toggle2) speciesRow2.insertBefore(assignG2Btn, toggle2);
+      else speciesRow2.insertBefore(assignG2Btn, speciesRow2.firstChild);
+    }
+    return;
+  }
+  if (assignG1Btn.parentNode !== assignG1Home.parent) {
+    const ref = assignG1Home.next && assignG1Home.next.parentNode === assignG1Home.parent
+      ? assignG1Home.next
+      : null;
+    assignG1Home.parent.insertBefore(assignG1Btn, ref);
+  }
+  if (assignG2Btn.parentNode !== assignG2Home.parent) {
+    const ref = assignG2Home.next && assignG2Home.next.parentNode === assignG2Home.parent
+      ? assignG2Home.next
+      : null;
+    assignG2Home.parent.insertBefore(assignG2Btn, ref);
+  }
+};
+
+const updateAssignIconSource = () => {
+  const href = isMobileViewport() ? ASSIGN_ICON_MOBILE : ASSIGN_ICON_DESKTOP;
+  [assignG1Btn, assignG2Btn].forEach(btn => {
+    if (!btn) return;
+    const use = btn.querySelector('use');
+    if (!use) return;
+    use.setAttribute('href', href);
+    use.setAttribute('xlink:href', href);
+  });
+};
+
+const enforceMobileDefaults = () => {
+  if (!isMobileViewport()) return;
+  S.wrapEdges = true;
+  S.fadeMode = false;
+};
+
+const ensureMobileGenomeList = () => {
+  if (!isMobileViewport()) return;
+  if (lastFileName === MOBILE_GENOME_FILE) return;
+  loadBundledGenomes(MOBILE_GENOME_FILE);
 };
 
 const DEFAULT_GRID_SIZE_DESKTOP = 40;
@@ -279,9 +365,11 @@ const stepBackward = () => {
 
 let loadedGenomes = [];
 let lastFileName = null;
+const MOBILE_GENOME_FILE = 'mobile_genome_list.json';
 // Add bundled genome files here (relative to public/). First entry is default.
 const bundledGenomeFiles = [
-  '2025.12.20_genome.json'
+  'master_genome_list.json',
+  MOBILE_GENOME_FILE
 ];
 const b1Input = $('b1');
 const s1Input = $('s1');
@@ -416,10 +504,7 @@ wrapBtn.onclick = () => {
 
 fadeBtn.onclick = () => {
   S.fadeMode = !S.fadeMode;
-  const fadeLabel = `Fade: ${S.fadeMode ? 'On' : 'Off'}`;
-  fadeBtn.textContent = fadeLabel;
-  fadeBtn.setAttribute('data-tooltip', fadeLabel);
-  fadeBtn.setAttribute('aria-pressed', S.fadeMode ? 'true' : 'false');
+  setFadeButtonState(S.fadeMode);
   draw();
 };
 
@@ -451,12 +536,24 @@ makeBtn.onclick = () => {
 /* ---------- genome loader ---------- */
 function renderGenomeList() {
   genomeList.innerHTML = '';
+  const usePlaceholder = isMobileViewport();
+  if (usePlaceholder) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'Select a genome';
+    opt.disabled = true;
+    opt.selected = true;
+    genomeList.appendChild(opt);
+  }
   loadedGenomes.forEach((g, idx) => {
     const opt = document.createElement('option');
     opt.value = String(idx);
     opt.textContent = `${g.id ?? idx} | b:${g.birth} s:${g.survival}`;
     genomeList.appendChild(opt);
   });
+  if (loadedGenomes.length && !usePlaceholder) {
+    genomeList.value = '0';
+  }
   if (loadedGenomes.length) {
     const name = lastFileName ? `${lastFileName}` : 'bundled';
     genomeStatus.textContent = `Loaded: ${name} (${loadedGenomes.length} genomes)`;
@@ -532,17 +629,19 @@ function decodeCountsFromBits(bits) {
 }
 
 function assignGenome(species) {
-  let idx = Number(genomeList.value);
-  if (!Number.isInteger(idx) || idx < 0 || idx >= loadedGenomes.length) {
+  const rawValue = genomeList.value;
+  let idx = Number(rawValue);
+  if (rawValue === '' || !Number.isInteger(idx) || idx < 0 || idx >= loadedGenomes.length) {
     if (!loadedGenomes.length) return;
     idx = 0; // default to first if none selected
+    genomeList.value = '0';
   }
   const g = loadedGenomes[idx];
   try {
     setGenomeForSpecies(species, g);
     const idLabel = g.id ?? 'n/a';
-    if (species === 1) labelS1.innerHTML = `SPECIES<br> 1: ${idLabel}`;
-    else labelS2.innerHTML = `SPECIES<br> 2: ${idLabel}`;
+    if (species === 1) labelS1.innerHTML = `#1:<br> ${idLabel}`;
+    else labelS2.innerHTML = `#2:<br> ${idLabel}`;
     // populate inputs for this species only: self+any in own boxes, other+any in the opposite-color boxes of the same row
     const countSelfAny = bits => {
       if (typeof bits !== 'string' || bits.length !== 16) return [];
@@ -638,12 +737,18 @@ if (sizeInput) {
   S.N = n;
 }
 updateGenomeListSize();
+ensureMobileGenomeList();
 positionFadeButton();
+positionSpeedControl();
+positionAssignButtons();
+updateAssignIconSource();
+enforceMobileDefaults();
 syncCanvasSize();
 alloc(canvas, S.cell);
 history.length = 0;
 setRunButtonState(false);
 setWrapButtonState(S.wrapEdges);
+setFadeButtonState(S.fadeMode);
 setManualRulesForSpecies(1);
 setManualRulesForSpecies(2);
 draw();
@@ -652,7 +757,14 @@ requestAnimationFrame(animate);
 window.addEventListener('resize', () => {
   syncCanvasSize();
   updateGenomeListSize();
+  ensureMobileGenomeList();
   positionFadeButton();
+  positionSpeedControl();
+  positionAssignButtons();
+  updateAssignIconSource();
+  enforceMobileDefaults();
+  setWrapButtonState(S.wrapEdges);
+  setFadeButtonState(S.fadeMode);
   updateSizeInputForMobile();
   if (!isMobileViewport()) {
     speciesRows.forEach(row => setSpeciesRowOpen(row, false));

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Symbiont v0.3</title>
+  <title>Symbiont v0.4</title>
   <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -15,7 +15,7 @@
     <div class="control-stack">
 
       <h1 class="title-mark">
-        <span class="sr-only">Symbiont Version 0.3</span>
+        <span class="sr-only">Symbiont Version 0.4</span>
         
         <svg class="title-svg title-soft" viewBox="0 0 1905.27 475.09" aria-hidden="true" focusable="false">
           <use href="%BASE_URL%svg-assets/symtitdoft.svg#icon"></use>
@@ -24,9 +24,15 @@
         <svg class="title-svg title-hard" viewBox="0 0 1905.27 475.09" aria-hidden="true" focusable="false">
           <use href="%BASE_URL%svg-assets/symtithard.svg#icon"></use>
         </svg>
+
+        <span class="title-version" aria-hidden="true">v0.4</span>
       </h1>
 
       <div class="control-panels">
+
+        <div class="control-panel speed-panel">
+          <div class="control-row tight-row" id="speedPanelRow"></div>
+        </div>
 
         <div class="control-panel">
           <div class="genome-grid">
@@ -49,7 +55,7 @@
               <select id="genomeList" size="8"></select>
             </div>
 
-            <button id="assignG1" aria-label="Set as Species 1" style="grid-column:5; grid-row:1;">
+            <button id="assignG1" class="assign-btn" aria-label="Set as Species 1" style="grid-column:5; grid-row:1;">
               <svg class="player-icon assign-icon species1-fill" viewBox="0 0 296.65 166.22" aria-hidden="true"
                 focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
@@ -57,7 +63,7 @@
 
             </button>
 
-            <button id="assignG2" aria-label="Set as Species 2" style="grid-column:5; grid-row:2;">
+            <button id="assignG2" class="assign-btn" aria-label="Set as Species 2" style="grid-column:5; grid-row:2;">
               <svg class="player-icon assign-icon species2-fill" viewBox="0 0 296.65 166.22" aria-hidden="true"
                 focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <use href="%BASE_URL%svg-assets/assign.svg#icon"></use>
@@ -129,9 +135,9 @@
 
         <div class="control-panel">
 
-          <div class="control-row tight-row">
+          <div class="control-row tight-row settings-row">
             <div class="control-unit">
-              <label for="size">Grid&nbsp;Size</label>
+              <label for="size">Grid Size:</label>
               <input id="size" type="number" min="5" value="40">
             </div>
 
@@ -171,7 +177,7 @@
           </div>
         </div>
 
-        <div class="control-panel">
+        <div class="control-panel sprinkle-panel">
           <div class="control-row tight-row">
             <button id="rand1" aria-label="Sprinkle species 1">
               <svg class="die-icon species1-fill" viewBox="0 0 512 520" aria-hidden="true" focusable="false">
