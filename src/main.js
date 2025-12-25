@@ -31,14 +31,60 @@ const syncCanvasSize = () => {
 };
 
 /* ------- colour helper ------- */
-const css = getComputedStyle(document.documentElement);
-const color1 = css.getPropertyValue('--species1').trim() || '#70c559';
-const color2 = css.getPropertyValue('--species2').trim() || '#f03cb1';
+const root = document.documentElement;
+const readCssVar = (name, fallback) => {
+  const value = getComputedStyle(root).getPropertyValue(name).trim();
+  return value || fallback;
+};
+const isValidHex = value =>
+  typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value);
+const getStoredColor = key => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+const setStoredColor = (key, value) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // ignore storage failures (private mode, etc.)
+  }
+};
+const COLOR_STORE = {
+  species1: 'symbiontSpecies1Color',
+  species2: 'symbiontSpecies2Color'
+};
+
+let color1 = readCssVar('--species1', '#70c559');
+let color2 = readCssVar('--species2', '#f03cb1');
+
+const storedColor1 = getStoredColor(COLOR_STORE.species1);
+if (isValidHex(storedColor1)) {
+  color1 = storedColor1;
+  root.style.setProperty('--species1', storedColor1);
+}
+const storedColor2 = getStoredColor(COLOR_STORE.species2);
+if (isValidHex(storedColor2)) {
+  color2 = storedColor2;
+  root.style.setProperty('--species2', storedColor2);
+}
+
 const hexToRgba = (hex, a) =>
   `rgba(${parseInt(hex.slice(1, 3), 16)},${parseInt(
     hex.slice(3, 5),
     16
   )},${parseInt(hex.slice(5, 7), 16)},${a})`;
+
+const applySpeciesColor = (varName, value, storeKey) => {
+  if (!isValidHex(value)) return;
+  root.style.setProperty(varName, value);
+  if (varName === '--species1') color1 = value;
+  if (varName === '--species2') color2 = value;
+  if (storeKey) setStoredColor(storeKey, value);
+  draw();
+};
 
 /* ------- draw grid & cells ------- */
 function draw() {
@@ -176,6 +222,10 @@ const speedControl = speedInp?.closest('.speed-control');
 const speedHome = speedControl ? { parent: speedControl.parentNode, next: speedControl.nextSibling } : null;
 const speedPanel = document.querySelector('.speed-panel');
 const speedPanelRow = document.getElementById('speedPanelRow');
+const titleTrigger = document.querySelector('.title-trigger');
+const colorPanel = $('colorPickerPanel');
+const species1Picker = $('species1Color');
+const species2Picker = $('species2Color');
 
 /* ---------- icon helpers ---------- */
 const ICON_BASE = `${import.meta.env.BASE_URL}svg-assets/`;
@@ -300,6 +350,82 @@ const enforceMobileDefaults = () => {
   S.wrapEdges = true;
   S.fadeMode = false;
 };
+
+const syncColorPickerInputs = () => {
+  if (species1Picker && isValidHex(color1)) species1Picker.value = color1;
+  if (species2Picker && isValidHex(color2)) species2Picker.value = color2;
+};
+
+const setColorPanelOpen = open => {
+  if (!colorPanel) return;
+  colorPanel.classList.toggle('is-open', open);
+  colorPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+  if (titleTrigger) {
+    titleTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+};
+
+const toggleColorPanel = () => {
+  if (!colorPanel) return;
+  setColorPanelOpen(!colorPanel.classList.contains('is-open'));
+};
+
+const LONG_PRESS_MS = 600;
+let longPressTimer = null;
+let suppressTitleClick = false;
+const clearLongPress = () => {
+  if (!longPressTimer) return;
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
+};
+
+titleTrigger?.addEventListener('click', () => {
+  if (suppressTitleClick) {
+    suppressTitleClick = false;
+    return;
+  }
+  if (isMobileViewport()) return;
+  toggleColorPanel();
+});
+
+titleTrigger?.addEventListener('touchstart', e => {
+  if (!isMobileViewport()) return;
+  if (e.touches && e.touches.length > 1) return;
+  clearLongPress();
+  longPressTimer = window.setTimeout(() => {
+    setColorPanelOpen(true);
+    suppressTitleClick = true;
+  }, LONG_PRESS_MS);
+});
+
+titleTrigger?.addEventListener('touchend', clearLongPress);
+titleTrigger?.addEventListener('touchmove', clearLongPress);
+titleTrigger?.addEventListener('touchcancel', clearLongPress);
+titleTrigger?.addEventListener('contextmenu', e => {
+  if (isMobileViewport()) e.preventDefault();
+});
+
+species1Picker?.addEventListener('input', e => {
+  applySpeciesColor('--species1', e.target.value, COLOR_STORE.species1);
+});
+
+species2Picker?.addEventListener('input', e => {
+  applySpeciesColor('--species2', e.target.value, COLOR_STORE.species2);
+});
+
+colorPanel?.addEventListener('click', e => {
+  e.stopPropagation();
+});
+
+document.addEventListener('click', e => {
+  if (!colorPanel || !colorPanel.classList.contains('is-open')) return;
+  if (colorPanel.contains(e.target) || titleTrigger?.contains(e.target)) return;
+  setColorPanelOpen(false);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') setColorPanelOpen(false);
+});
 
 const ensureMobileGenomeList = () => {
   if (!isMobileViewport()) return;
@@ -743,6 +869,7 @@ positionSpeedControl();
 positionAssignButtons();
 updateAssignIconSource();
 enforceMobileDefaults();
+syncColorPickerInputs();
 syncCanvasSize();
 alloc(canvas, S.cell);
 history.length = 0;

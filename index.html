@@ -26,6 +26,19 @@
         </svg>
 
         <span class="title-version" aria-hidden="true">v0.4</span>
+
+        <span id="colorPickerPanel" class="color-picker-panel" aria-hidden="true">
+          <span class="color-picker-row">
+            <label for="species1Color">Species 1</label>
+            <input id="species1Color" type="color" aria-label="Species 1 color">
+          </span>
+          <span class="color-picker-row">
+            <label for="species2Color">Species 2</label>
+            <input id="species2Color" type="color" aria-label="Species 2 color">
+          </span>
+        </span>
+
+        <button type="button" class="title-trigger" aria-label="Edit species colors" aria-expanded="false" aria-controls="colorPickerPanel"></button>
       </h1>
 
       <div class="control-panels">
