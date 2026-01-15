@@ -271,7 +271,7 @@ const setFadeButtonState = isOn => {
   fadeBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
 };
 
-const isMobileViewport = () => window.matchMedia('(max-width: 768px)').matches;
+const isMobileViewport = () => window.matchMedia('(max-width: 1100px)').matches;
 const updateGenomeListSize = () => {
   if (!genomeList) return;
   genomeList.size = isMobileViewport() ? 1 : 8;
@@ -491,10 +491,17 @@ const stepBackward = () => {
 
 let loadedGenomes = [];
 let lastFileName = null;
-const MOBILE_GENOME_FILE = 'mobile_genome_list.json';
+const MOBILE_GENOME_FILE = 'best_coexistors.json';
 // Add bundled genome files here (relative to public/). First entry is default.
 const bundledGenomeFiles = [
-  'master_genome_list.json',
+  'best_balanced_survivors.json',
+  'best_dominators.json',
+  'best_fragile_sprinters.json',
+  'best_nulls.json',
+  'best_panel_drifters.json',
+  'best_panel_specialists.json',
+  'best_quiet_tilers.json',
+  'best_turbulent_mixers.json',
   MOBILE_GENOME_FILE
 ];
 const b1Input = $('b1');

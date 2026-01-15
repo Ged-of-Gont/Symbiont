@@ -7,6 +7,7 @@
   --species2: #17e197;
   --species1: #f62a2a;
   --app-max-width: clamp(288px, 80vw, 1000px);
+  --control-col-min: clamp(88px, 8vw, 110px);
   --ui-font:'Share Tech Mono',monospace;
   --tight-gap: 1rem;
 }
@@ -169,7 +170,7 @@ body {
 
 .app-shell {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: flex-end;
   justify-content: center;
   gap: clamp(1rem, 3vw, 2.5rem);
@@ -191,8 +192,8 @@ body {
 }
 
 .canvas-wrap {
-  flex: 1 1 clamp(520px, 55vw, var(--app-max-width));
-  min-width: clamp(520px, 55vw, var(--app-max-width));
+  flex: 1 1 clamp(360px, 40vw, var(--app-max-width));
+  min-width: clamp(360px, 40vw, var(--app-max-width));
   max-width: var(--app-max-width);
   width: min(100%, var(--app-max-width));
   display: flex;
@@ -283,7 +284,7 @@ input[type="file"] {
 
 .control-row {
   display: grid;
-  grid-template-columns: repeat(5, minmax(110px, 1fr));
+  grid-template-columns: repeat(5, minmax(var(--control-col-min), 1fr));
   grid-auto-rows: 90px;
   align-items: stretch;
   justify-content: stretch;
@@ -445,7 +446,7 @@ input[type="file"] {
 
 .tight-row {
   display: grid;
-  grid-template-columns: repeat(5, minmax(110px, 1fr));
+  grid-template-columns: repeat(5, minmax(var(--control-col-min), 1fr));
   gap: var(--tight-gap);
   grid-auto-rows: 90px;
 }
@@ -502,7 +503,7 @@ input[type="file"] {
 
 .genome-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(110px, 1fr));
+  grid-template-columns: repeat(5, minmax(var(--control-col-min), 1fr));
   grid-template-rows: repeat(2, 90px);
   gap: var(--tight-gap);
 }
@@ -722,19 +723,17 @@ canvas.wrap-unbound {
 }
 
 @media (max-width: 1100px) {
+  :root {
+    --tight-gap: 0.6rem;
+  }
+
   .canvas-wrap {
-    flex-basis: 100%;
     min-width: 0;
   }
+
   canvas {
     width: min(100%, calc(100vw - 2rem));
     min-width: 0;
-  }
-}
-
-@media (max-width: 768px) {
-  :root {
-    --tight-gap: 0.6rem;
   }
 
   body {
@@ -742,6 +741,7 @@ canvas.wrap-unbound {
   }
 
   .app-shell {
+    flex-wrap: wrap;
     padding: 0.4rem 1rem 1rem;
     gap: var(--tight-gap);
   }
@@ -972,7 +972,7 @@ canvas.wrap-unbound {
   }
 }
 
-@media (max-width: 768px) and (hover: hover) and (pointer: fine) {
+@media (max-width: 1100px) and (hover: hover) and (pointer: fine) {
   button.species-toggle:hover {
     background: var(--color-line);
     color: var(--input-color);
